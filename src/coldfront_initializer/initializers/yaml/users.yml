@@ -1,0 +1,109 @@
+admin:
+  is_active: true
+  is_superuser: true
+  password: test1234 #gitleaks:allow
+ajohnson:
+  first_name: Amanda
+  last_name: Johnson
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: ajohnson@example.com
+arivera:
+  first_name: Alice
+  last_name: Rivera
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: arivera@example.com
+astewart:
+  first_name: Andrea
+  last_name: Stewart
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: astewart@example.com
+bmitchell:
+  first_name: Beverly
+  last_name: Mitchell
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: bmitchell@example.com
+bperez:
+  first_name: Billy
+  last_name: Perez
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: bperez@example.com
+cgray:
+  first_name: Carl
+  last_name: Gray
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: cgray@example.com
+clee:
+  first_name: Carol
+  last_name: Lee
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: clee@example.com
+cmorris:
+  first_name: Christina
+  last_name: Morris
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: cmorris@example.com
+csimmons:
+  first_name: Charles
+  last_name: Simmons
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: csimmons@example.com
+ereed:
+  first_name: Ernest
+  last_name: Reed
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: ereed@example.com
+jbutler:
+  first_name: Jane
+  last_name: Butler
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: jbutler@example.com
+lbell:
+  first_name: Lillian
+  last_name: Bell
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: lbell@example.com
+lcoleman:
+  first_name: Lisa
+  last_name: Coleman
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: lcoleman@example.com
+rwilson:
+  first_name: Roger
+  last_name: Wilson
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: rwilson@example.com
+sfoster:
+  first_name: Stephanie
+  last_name: Foster
+  is_active: true
+  is_superuser: false
+  password: test1234 #gitleaks:allow
+  email: sfoster@example.com

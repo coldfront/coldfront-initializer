@@ -1,0 +1,36 @@
+[project]
+name = "coldfront-initializer"
+version = "0.0.1"
+description = "Load data into ColdFront from yaml files"
+readme = "README.md"
+authors = [
+    { name = "Andrew E. Bruno", email = "aebruno2@buffalo.edu" }
+]
+license = "Apache-2.0"
+license-files = ["LICENSES/*.txt"]
+keywords = ["high-performance-computing", "resource-allocation"]
+classifiers = [
+    "Framework :: Django",
+    "Environment :: Plugins",
+    'Topic :: Scientific/Engineering',
+    'Topic :: System :: Systems Administration',
+]
+requires-python = ">=3.12"
+dependencies = [
+    "coldfront",
+    "jinja2>=3.1.6",
+    "ruamel-yaml>=0.19.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.24,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+coldfront = { git = "https://github.com/coldfront/coldfront", branch = "feature/v2-poc" }
+
+[dependency-groups]
+dev = [
+    "reuse>=6.2.0",
+    "ruff>=0.15.7",
+]

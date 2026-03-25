@@ -1,0 +1,55 @@
+## Possible Choices:
+##   type:
+##   - text
+##   - integer
+##   - boolean
+##   - date
+##   - url
+##   - select
+##   - multiselect
+##   - object
+##   - multiobject
+##   filter_logic:
+##   - disabled
+##   - loose
+##   - exact
+##   ui_visibility:
+##   - read-write
+##   - read-only
+##   - hidden
+##
+## Examples:
+
+project_code:
+  type: text
+  label: Project Code
+  description: Enter a project code
+  required: false
+  weight: 0
+  group_name: Project Info
+  ui_visibility: read-write
+  required_action: project_code
+  search_weight: 100
+  on_objects:
+    - coldfront.ras.models.Project
+allocation_code:
+  type: integer
+  label: Allocation Code
+  description: Enter numbers into an integer field.
+  required: false
+  filter_logic: loose
+  validation_minimum: 0
+  validation_maximum: 2048
+  weight: 10
+  is_cloneable: false
+  on_objects:
+    - coldfront.ras.models.Allocation
+is_awesome:
+  type: boolean
+  label: Is this Awesome?
+  required: false
+  filter_logic: loose
+  default: "false" # important: put "false" in quotes!
+  weight: 90
+  on_objects:
+    - coldfront.ras.models.Resource

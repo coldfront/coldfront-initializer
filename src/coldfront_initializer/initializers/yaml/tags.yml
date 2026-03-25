@@ -1,0 +1,15 @@
+- name: Awesome
+  slug: is-awesome
+  color: Pink
+- name: Payment Sent
+  slug: paymnet-sent
+  color: Teal
+  object_types:
+    - app: ras
+      model: allocation
+- name: Review Required
+  slug: review-required
+  color: Yellow
+  object_types:
+    - app: ras
+      model: project

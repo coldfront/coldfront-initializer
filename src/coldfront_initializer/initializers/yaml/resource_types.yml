@@ -1,0 +1,59 @@
+- name: Slurm Cluster
+  slug: slurm-cluster
+  description: A slurm cluster
+  color: Blue
+  schema:
+    properties:
+      architecture:
+        title: Architecture
+        type: string
+      cores:
+        description: Number of cores
+        title: Cores
+        type: integer
+      nodes:
+        description: Number of nodes
+        title: Nodes,
+        type: integer
+      slurm_specs:
+        title: Slurm Specs
+        type: string
+
+  allocation_schema:
+    properties:
+      slurm_specs:
+        title: Slurm Specs
+        type: string
+        requiredAction: slurm_attrs
+      slurm_account:
+        title: Surm Account
+        type: string
+        requiredAction: slurm_attrs
+      su:
+        description: Service Units
+        title: SUs
+        type: number
+
+- name: Commercial Software
+  slug: com-soft
+  description: A commercial software product EULA required
+  color: Red
+  schema:
+    properties:
+      lic_count:
+        title: License Count
+        type: integer
+
+  allocation_schema:
+    properties:
+      eula:
+        title: EULA
+        description: |
+          The University HPC has an agreement to allow use of their software by
+          any staff and students for academic use only. If you decide not to
+          agree to the terms, we will delete the allocation request for you. Do
+          you agree to these terms?
+        type: string
+        enum:
+          - No
+          - Yes

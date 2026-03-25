@@ -1,0 +1,20 @@
+- name: University HPC
+  slug: uhpc
+  status: active
+  resource_type: Slurm Cluster
+  attribute_data:
+    architecture: x86_64
+    cores: 10000
+    nodes: 250
+    slurm_specs: "QOS+=general-compute,debug,scavenger:Fairshare=100"
+  custom_field_data:
+    is_awesome: "True"
+  tags:
+    - Awesome
+
+- name: Commercial Software X
+  slug: comsoft-x
+  status: active
+  resource_type: Commercial Software
+  attribute_data:
+    lic_count: 200

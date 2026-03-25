@@ -1,0 +1,8 @@
+- name: University of ColdFront
+  slug: ucf
+- name: School of Engineering
+  slug: seas
+  parent: University of ColdFront
+- name: School of Sciences
+  slug: sci
+  parent: University of ColdFront

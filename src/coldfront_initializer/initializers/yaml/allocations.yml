@@ -1,0 +1,39 @@
+- project: Angular momentum in QGP holography
+  owner: cgray
+  resource: University HPC
+  status: new
+  justification: Need more resources
+  users:
+    - cgray
+    - astewart
+    - bmitchell
+  custom_field_data:
+    allocation_code: 1001
+
+- project: Measuring critical behavior of quantum Hall transitions
+  owner: sfoster
+  resource: University HPC
+  justification: I lack the necessary resources
+  status: approved
+  users:
+    - sfoster
+    - arivera
+    - bperez
+  tags:
+    - Payment Sent
+  custom_field_data:
+    allocation_code: 1002
+
+- project: Measuring critical behavior of quantum Hall transitions
+  owner: sfoster
+  resource: Commercial Software X
+  justification: Need required software
+  status: new
+  users:
+    - sfoster
+    - arivera
+    - bperez
+  attribute_data:
+    eula: "Yes"
+  custom_field_data:
+    allocation_code: 1003

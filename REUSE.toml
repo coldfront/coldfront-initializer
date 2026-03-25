@@ -1,0 +1,21 @@
+version = 1
+SPDX-PackageName = "coldfront-initializer"
+SPDX-PackageDownloadLocation = "https://github.com/coldfront/coldfront-initializer"
+
+[[annotations]]
+path = [
+    ".python-version",
+    "pyproject.toml",
+    "**.yml",
+    "**.md",
+    "**.gitignore",
+]
+SPDX-FileCopyrightText = "(C) ColdFront Authors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+    "uv.lock",
+]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"

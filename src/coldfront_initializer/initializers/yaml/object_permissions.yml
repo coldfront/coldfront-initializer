@@ -1,0 +1,105 @@
+# Example:
+# all.ro:
+#   actions:
+#     - view
+#   description: 'Read Only for All Objects'
+#   enabled: true
+#   groups:
+#     - applications
+#     - readers
+#   object_types: all
+#   users:
+#     - jdoe
+projects.rw:
+  actions:
+    - view
+    - add
+    - change
+    - delete
+  description: "Permission to manage your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - project
+  groups:
+    - principal_investigators
+  constraints:
+    owner: $user
+
+allocations.request:
+  actions:
+    - request
+  description: "Permission to request allocations"
+  enabled: true
+  object_types:
+    ras:
+      - allocation
+  groups:
+    - principal_investigators
+
+project_users.rw:
+  actions:
+    - view
+    - add
+    - change
+    - delete
+  description: "Permission to manage project users"
+  enabled: true
+  object_types:
+    ras:
+      - projectuser
+  groups:
+    - principal_investigators
+    - project_manager
+  constraints:
+    - project__owner: $user
+    - project__users__user: $user
+
+allocation_users.rw:
+  actions:
+    - view
+    - add
+    - change
+    - delete
+  description: "Permission to manage allocation users"
+  enabled: true
+  object_types:
+    ras:
+      - allocationuser
+  groups:
+    - principal_investigators
+    - project_manager
+  constraints:
+    - allocation__owner: $user
+    - allocation__project__owner: $user
+    - allocation__users__user: $user
+
+users.ro:
+  actions:
+    - view
+  description: "Permission to view all users"
+  enabled: true
+  object_types:
+    users:
+      - user
+  groups:
+    - principal_investigators
+    - project_manager
+
+allocation_slurm_attrs.rw:
+  actions:
+    - slurm_attrs
+  description: "Permission to edit slurm attributes on an allocation"
+  enabled: true
+  object_types:
+    ras:
+      - allocation
+
+project_code_field.rw:
+  actions:
+    - project_code
+  description: "Permission to edit project code custom field on a project"
+  enabled: true
+  object_types:
+    ras:
+      - project

@@ -1,0 +1,6 @@
+- name: Computer Science
+  slug: seas
+  group: School of Engineering
+- name: Physics
+  slug: phys
+  group: School of Sciences
