@@ -20,14 +20,11 @@ OPTIONAL_ASSOCS = {
 
 
 class ProjectInitializer(BaseInitializer):
-    data_file_name = "projects.yml"
-
-    def load_data(self):
-        projects = self.load_yaml()
-        if projects is None:
+    def load_data(self, records):
+        if records is None:
             return
 
-        for params in projects:
+        for params in records:
             custom_field_data = self.pop_custom_fields(params)
             tags = params.pop("tags", None)
             users = params.pop("users", [])

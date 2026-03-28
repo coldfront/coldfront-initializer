@@ -13,17 +13,14 @@ from coldfront_initializer.initializers.base import (
 
 
 class UserInitializer(BaseInitializer):
-    data_file_name = "users.yml"
-
     def get_context(self):
         return {"users": User.objects.all()}
 
-    def load_data(self):
-        users = self.load_yaml()
-        if users is None:
+    def load_data(self, records):
+        if records is None:
             return
 
-        for username, user_details in users.items():
+        for username, user_details in records.items():
             api_token = user_details.pop("api_token", None)
             password = user_details.pop("password", get_random_string(length=25))
             user, created = User.objects.get_or_create(
@@ -33,7 +30,9 @@ class UserInitializer(BaseInitializer):
                 user.set_password(password)
                 user.save()
                 if api_token:
-                    api_token = Token.generate_key() if api_token == "generate" else api_token
+                    api_token = (
+                        Token.generate_key() if api_token == "generate" else api_token
+                    )
                     Token.objects.get_or_create(user=user, key=api_token)
                 print("👤 Created user", username)
 

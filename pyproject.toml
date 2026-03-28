@@ -1,6 +1,6 @@
 [project]
 name = "coldfront-initializer"
-version = "0.0.1"
+version = "0.0.2"
 description = "Load data into ColdFront from yaml files"
 readme = "README.md"
 authors = [
@@ -34,3 +34,9 @@ dev = [
     "reuse>=6.2.0",
     "ruff>=0.15.7",
 ]
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true

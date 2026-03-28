@@ -23,13 +23,11 @@ def get_class_for_class_path(class_path):
 
 
 class CustomFieldInitializer(BaseInitializer):
-    data_file_name = "custom_fields.yml"
-
-    def load_data(self):
-        customfields = self.load_yaml()
-        if customfields is None:
+    def load_data(self, records):
+        if records is None:
             return
-        for cf_name, cf_details in customfields.items():
+
+        for cf_name, cf_details in records.items():
             custom_field, created = CustomField.objects.get_or_create(name=cf_name)
 
             if created:

@@ -14,13 +14,11 @@ OPTIONAL_ASSOCS = {"parent": (TenantGroup, "name")}
 
 
 class TenantGroupInitializer(BaseInitializer):
-    data_file_name = "tenant_groups.yml"
-
-    def load_data(self):
-        tenant_groups = self.load_yaml()
-        if tenant_groups is None:
+    def load_data(self, records):
+        if records is None:
             return
-        for params in tenant_groups:
+
+        for params in records:
             tags = params.pop("tags", None)
 
             for assoc, details in OPTIONAL_ASSOCS.items():

@@ -13,13 +13,11 @@ from coldfront_initializer.initializers.base import (
 
 
 class ObjectPermissionInitializer(BaseInitializer):
-    data_file_name = "object_permissions.yml"
-
-    def load_data(self):
-        object_permissions = self.load_yaml()
-        if object_permissions is None:
+    def load_data(self, records):
+        if records is None:
             return
-        for permission_name, permission_details in object_permissions.items():
+
+        for permission_name, permission_details in records.items():
             object_permission, created = ObjectPermission.objects.get_or_create(
                 name=permission_name,
                 defaults={

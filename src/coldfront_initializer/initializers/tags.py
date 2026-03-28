@@ -13,13 +13,11 @@ from coldfront_initializer.initializers.base import (
 
 
 class TagInitializer(BaseInitializer):
-    data_file_name = "tags.yml"
-
-    def load_data(self):
-        tags = self.load_yaml()
-        if tags is None:
+    def load_data(self, records):
+        if records is None:
             return
-        for params in tags:
+
+        for params in records:
             if "color" in params:
                 color = params.pop("color")
 

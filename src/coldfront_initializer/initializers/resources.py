@@ -17,14 +17,11 @@ OPTIONAL_ASSOCS = {
 
 
 class ResourceInitializer(BaseInitializer):
-    data_file_name = "resources.yml"
-
-    def load_data(self):
-        resources = self.load_yaml()
-        if resources is None:
+    def load_data(self, records):
+        if records is None:
             return
 
-        for params in resources:
+        for params in records:
             custom_field_data = self.pop_custom_fields(params)
             tags = params.pop("tags", None)
 

@@ -1,0 +1,42 @@
+- name: Slurm Cluster
+  slug: slurm-cluster
+  description: A Slurm cluster
+  color: Blue
+  schema:
+    properties:
+      architecture:
+        title: Architecture
+        type: string
+      cores:
+        description: Number of cores
+        title: Cores
+        type: integer
+      nodes:
+        description: Number of nodes
+        title: Nodes,
+        type: integer
+      slurm_cluster:
+        title: Cluster Name
+        description: Name of the Slurm cluster
+        type: string
+      slurm_specs:
+        title: Slurm Specs
+        description: Must conform to the Slurm specification format colon separated
+        type: string
+
+  allocation_schema:
+    properties:
+      slurm_specs:
+        title: Slurm Specs
+        description: Must conform to the Slurm specification format colon separated
+        type: string
+        requiredAction: change
+      slurm_user_specs:
+        title: Slurm User Specs
+        description: Must conform to the Slurm specification format colon separated
+        type: string
+        requiredAction: change
+      slurm_account:
+        title: Surm Account Name
+        type: string
+        requiredAction: change

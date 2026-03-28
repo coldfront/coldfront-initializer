@@ -7,7 +7,7 @@ import os
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-import coldfront_initializer.initializers
+import coldfront_initializer
 
 
 class Command(BaseCommand):
@@ -34,9 +34,7 @@ class Command(BaseCommand):
             if user_response != "yes":
                 self.stdout.write("Please enter 'yes' if you wish to load test data.")
 
-        intializer_base_path = os.path.dirname(
-            coldfront_initializer.initializers.__file__
-        )
-        intializer_path = f"{intializer_base_path}/yaml"
+        intializer_base_path = os.path.dirname(coldfront_initializer.__file__)
+        intializer_path = f"{intializer_base_path}/examples"
 
         call_command("load_initializer_data", "--path", intializer_path)

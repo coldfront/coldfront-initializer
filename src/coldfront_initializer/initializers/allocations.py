@@ -29,14 +29,11 @@ OPTIONAL_ASSOCS = {
 
 
 class AllocationInitializer(BaseInitializer):
-    data_file_name = "allocations.yml"
-
-    def load_data(self):
-        allocations = self.load_yaml()
-        if allocations is None:
+    def load_data(self, records):
+        if records is None:
             return
 
-        for params in allocations:
+        for params in records:
             custom_field_data = self.pop_custom_fields(params)
             tags = params.pop("tags", None)
             users = params.pop("users", [])

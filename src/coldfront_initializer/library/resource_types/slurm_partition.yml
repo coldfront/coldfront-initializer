@@ -1,0 +1,27 @@
+- name: Slurm Partition
+  slug: slurm-partition
+  description: A Slurm partition
+  color: Amber
+  schema:
+    properties:
+      slurm_specs:
+        title: Slurm Specs
+        description: Must conform to the Slurm specification format colon separated
+        type: string
+
+  allocation_schema:
+    properties:
+      slurm_specs:
+        title: Slurm Specs
+        description: Must conform to the Slurm specification format colon separated
+        type: string
+        requiredAction: change
+      slurm_user_specs:
+        title: Slurm User Specs
+        description: Must conform to the Slurm specification format colon separated
+        type: string
+        requiredAction: change
+      slurm_account:
+        title: Surm Account Name
+        type: string
+        requiredAction: change

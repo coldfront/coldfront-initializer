@@ -14,13 +14,10 @@ from ruamel.yaml import YAML
 
 
 class BaseInitializer:
-    # File name for import; Musst be set in subclass
-    data_file_name = ""
-
     def __init__(self, data_file_path: str) -> None:
         self.data_file_path = data_file_path
 
-    def load_data(self):
+    def load_data(self, records):
         # Must be implemented by specific subclass
         pass
 
@@ -33,13 +30,11 @@ class BaseInitializer:
     def get_context(self):
         return {}
 
-    def load_yaml(self, data_file_name=None):
-        if data_file_name:
-            yf = Path(f"{self.data_file_path}/{data_file_name}")
-        else:
-            yf = Path(f"{self.data_file_path}/{self.data_file_name}")
+    def load_yaml(self, data_file_name):
+        yf = Path(f"{self.data_file_path}/{data_file_name}")
         if not yf.is_file():
             return None
+
         with yf.open("r") as stream:
             yaml = YAML(typ="safe")
 
@@ -48,11 +43,6 @@ class BaseInitializer:
                 return yaml.load(template.render(self.get_context()))
 
             return yaml.load(stream)
-
-    def dump_data(self, to_file):
-        data = self.load_yaml()
-        yaml = YAML()
-        yaml.dump(data, to_file)
 
     def pop_custom_fields(self, params):
         if "custom_field_data" in params:

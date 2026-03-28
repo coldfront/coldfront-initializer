@@ -13,14 +13,11 @@ from coldfront_initializer.initializers.base import (
 
 
 class ResourceTypeInitializer(BaseInitializer):
-    data_file_name = "resource_types.yml"
-
-    def load_data(self):
-        resource_types = self.load_yaml()
-        if resource_types is None:
+    def load_data(self, records):
+        if records is None:
             return
 
-        for params in resource_types:
+        for params in records:
             custom_field_data = self.pop_custom_fields(params)
             tags = params.pop("tags", None)
 

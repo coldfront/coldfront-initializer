@@ -12,14 +12,11 @@ from coldfront_initializer.initializers.base import (
 
 
 class GroupInitializer(BaseInitializer):
-    data_file_name = "groups.yml"
-
-    def load_data(self):
-        groups = self.load_yaml()
-        if groups is None:
+    def load_data(self, records):
+        if records is None:
             return
 
-        for groupname, group_details in groups.items():
+        for groupname, group_details in records.items():
             group, created = Group.objects.get_or_create(name=groupname)
             if created:
                 print("👥 Created group", groupname)
