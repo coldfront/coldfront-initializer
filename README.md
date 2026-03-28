@@ -1,25 +1,25 @@
-# ColdFront Initializers Plugin
+# ColdFront Initializer Plugin
 
 This plugin loads data from yaml files into ColdFront. 
 
 ## Install
 
-Install ColdFront and add `initializers` extra group:
+Install ColdFront and add `initializer` extra group:
 
 ```
-$ uv tool install coldfront[initializers]
+$ uv tool install coldfront[initializer]
 ```
 
 If you already have ColdFront installed you can run:
 
 ```
-$ uv sync --extra initializers
+$ uv sync --extra initializer
 ```
 
 Or install directly via pip:
 
 ```
-$ uv pip install coldfront-initializers
+$ uv pip install coldfront-initializer
 ```
 
 Next add the plugin to the `PLUGINS` setting in your ColdFront configuration:
@@ -39,7 +39,7 @@ $ uv run coldfront load_test_data
 Copy the example test data files so you can edit/update:
 
 ```
-$ uv run coldfront copy_initializers_examples --path /path/for/example/files
+$ uv run coldfront copy_initializer_examples --path /path/for/example/files
 ```
 
 Load data from a directory:
