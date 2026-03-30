@@ -1,7 +1,7 @@
 admin:
   is_active: true
   is_superuser: true
-  password: test1234 #gitleaks:allow
+  password_hash: pbkdf2_sha256$1000000$aFermxApVGtENTzd6A4043$2/Cr0z6fstKSBKFzyVw9hZFNndCiJz4B4W0V0cKK2J8= #gitleaks:allow
 ajohnson:
   first_name: Amanda
   last_name: Johnson
@@ -91,7 +91,7 @@ lcoleman:
   last_name: Coleman
   is_active: true
   is_superuser: false
-  password: test1234 #gitleaks:allow
+  date_joined: "2012-03-29T16:01:51.774166Z"
   email: lcoleman@example.com
 rwilson:
   first_name: Roger

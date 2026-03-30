@@ -29,7 +29,8 @@ class ResourceTypeInitializer(BaseInitializer):
                         params["color"] = color_tpl[0]
 
             for schema in ["schema", "allocation_schema"]:
-                validate_schema(params[schema])
+                if schema in params:
+                    validate_schema(params[schema])
 
             matching_params, defaults = self.split_params(params)
             resource_type, created = ResourceType.objects.get_or_create(

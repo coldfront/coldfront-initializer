@@ -13,6 +13,7 @@ from coldfront_initializer.initializers.base import (
 OPTIONAL_ASSOCS = {
     "resource_type": (ResourceType, "name"),
     "tenant": (Tenant, "name"),
+    "parent": (Resource, "name"),
 }
 
 
@@ -24,6 +25,7 @@ class ResourceInitializer(BaseInitializer):
         for params in records:
             custom_field_data = self.pop_custom_fields(params)
             tags = params.pop("tags", None)
+            create_date = params.pop("created", None)
 
             for assoc, details in OPTIONAL_ASSOCS.items():
                 if assoc in params:
@@ -38,6 +40,7 @@ class ResourceInitializer(BaseInitializer):
             )
 
             if created:
+                self.set_create_date(resource, create_date)
                 print("🖥️  Created resource", resource.name)
 
             self.set_custom_fields_values(resource, custom_field_data)

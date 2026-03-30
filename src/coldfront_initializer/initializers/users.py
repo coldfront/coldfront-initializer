@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from coldfront.users.models import Token, User
-from django.utils.crypto import get_random_string
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
@@ -22,13 +21,21 @@ class UserInitializer(BaseInitializer):
 
         for username, user_details in records.items():
             api_token = user_details.pop("api_token", None)
-            password = user_details.pop("password", get_random_string(length=25))
+            password = user_details.pop("password", None)
+            password_hash = user_details.pop("password_hash", None)
             user, created = User.objects.get_or_create(
                 username=username, defaults=user_details
             )
             if created:
-                user.set_password(password)
+                if password_hash:
+                    user.password = password_hash
+                elif password:
+                    user.set_password(password)
+                else:
+                    user.set_unusable_password()
+
                 user.save()
+
                 if api_token:
                     api_token = (
                         Token.generate_key() if api_token == "generate" else api_token

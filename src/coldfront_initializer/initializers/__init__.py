@@ -6,6 +6,7 @@
 # ruff: noqa: F401
 # All initializers must be imported here, to be registered
 from .allocations import AllocationInitializer
+from .custom_field_choicesets import CustomFieldChoiceSetInitializer
 from .custom_fields import CustomFieldInitializer
 from .groups import GroupInitializer
 from .object_permissions import ObjectPermissionInitializer

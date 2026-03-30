@@ -83,6 +83,13 @@ class BaseInitializer:
         if save:
             entity.save()
 
+    def set_create_date(self, entity, create_date):
+        if not create_date:
+            return
+
+        entity.created = create_date
+        entity.save()
+
     def set_tags(self, entity, tags):
         if not tags:
             return
@@ -134,6 +141,7 @@ INITIALIZER_ORDER = (
     "users",
     "groups",
     "object_permissions",
+    "custom_field_choicesets",
     "custom_fields",
     "tags",
     "tenant_groups",

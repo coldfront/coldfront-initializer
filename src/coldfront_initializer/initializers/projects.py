@@ -27,6 +27,7 @@ class ProjectInitializer(BaseInitializer):
         for params in records:
             custom_field_data = self.pop_custom_fields(params)
             tags = params.pop("tags", None)
+            create_date = params.pop("created", None)
             users = params.pop("users", [])
 
             for assoc, details in REQUIRED_ASSOCS.items():
@@ -48,6 +49,8 @@ class ProjectInitializer(BaseInitializer):
             )
 
             if created:
+                self.set_create_date(project, create_date)
+
                 print("🖥️  Created project", project.name)
 
             for u in users:

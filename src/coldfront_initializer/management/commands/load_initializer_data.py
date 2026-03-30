@@ -23,9 +23,9 @@ class Command(BaseCommand):
         parser.add_argument("--path", help="Path of the initial data YAMLs")
         parser.add_argument("--library", help="Name of the library to load")
         parser.add_argument(
-            "--slugs",
+            "--filter",
             nargs="+",
-            help="List of slugs to load from the library YAML files",
+            help="List of file names to load from the library",
             default="",
         )
 
@@ -41,10 +41,10 @@ class Command(BaseCommand):
             self.load_dir(target_path)
 
         if library:
-            self.load_library(library, options["slugs"])
+            self.load_library(library, options["filter"])
 
-    def load_library(self, library, slugs):
-        slugs = [s for slug in slugs for s in slug.split(",") if s.strip()]
+    def load_library(self, library, filter):
+        filter = [n for name in filter for n in name.split(",") if n.strip()]
 
         library_base_path = os.path.dirname(coldfront_initializer.__file__)
         library_path = f"{library_base_path}/library/{library}"
@@ -57,38 +57,24 @@ class Command(BaseCommand):
         initializer = INITIALIZER_REGISTRY[library]
         initializer_instance = initializer(library_path)
 
-        data = []
-
         with os.scandir(library_path) as yaml_files:
             for file in yaml_files:
                 if not file.name.endswith("yml"):
+                    continue
+                if filter and file.name not in filter:
                     continue
 
                 try:
                     records = initializer_instance.load_yaml(file.name)
                     if not records:
                         raise CommandError(f"Library file {file.name} has no records.")
+
+                    initializer_instance.load_data(records)
                 except Exception as e:
                     traceback.print_exception(e)
                     raise CommandError(
                         f"{initializer.__name__} failed loading library file {file}."
                     ) from e
-
-                if not slugs:
-                    data.extend(records)
-                    continue
-
-                # filter by slug
-                for record in records:
-                    for s in slugs:
-                        if "slug" in record and record["slug"] == s:
-                            data.append(record)
-
-        try:
-            initializer_instance.load_data(data)
-        except Exception as e:
-            traceback.print_exception(e)
-            raise CommandError(f"{initializer.__name__} failed.") from e
 
     def load_dir(self, target_path):
         if not os.path.isdir(target_path):

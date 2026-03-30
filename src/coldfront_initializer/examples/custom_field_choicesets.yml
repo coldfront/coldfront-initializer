@@ -1,0 +1,7 @@
+- name: States
+  description: Example custom field choice set
+  order_alphabetically: true
+  choices:
+    - "NY:New York"
+    - "VT:Vermont"
+    - "CA:California"

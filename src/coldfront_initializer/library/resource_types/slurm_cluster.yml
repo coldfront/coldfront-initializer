@@ -13,7 +13,7 @@
         type: integer
       nodes:
         description: Number of nodes
-        title: Nodes,
+        title: Nodes
         type: integer
       slurm_cluster:
         title: Cluster Name

@@ -37,6 +37,7 @@ class AllocationInitializer(BaseInitializer):
             custom_field_data = self.pop_custom_fields(params)
             tags = params.pop("tags", None)
             users = params.pop("users", [])
+            create_date = params.pop("created", None)
 
             for assoc, details in REQUIRED_ASSOCS.items():
                 model, field = details
@@ -57,6 +58,7 @@ class AllocationInitializer(BaseInitializer):
             )
 
             if created:
+                self.set_create_date(allocation, create_date)
                 print("🖥️  Created allocation", allocation.slug)
 
             for u in users:

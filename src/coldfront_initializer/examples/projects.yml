@@ -18,6 +18,7 @@
 - name: Measuring critical behavior of quantum Hall transitions
   slug: quantum-hall
   status: active
+  created: "2002-10-29T16:11:51.774166Z"
   description: This purpose of this project is to measure the critical behavior of quantum Hall transitions
   owner: sfoster
   users:
