@@ -173,7 +173,7 @@ dependencies = [
 
 [[package]]
 name = "coldfront-initializer"
-version = "0.0.3"
+version = "0.0.4"
 source = { editable = "." }
 dependencies = [
     { name = "coldfront" },
