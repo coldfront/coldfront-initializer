@@ -66,9 +66,10 @@ class AllocationInitializer(BaseInitializer):
                 if not ProjectUser.objects.filter(
                     user=user, project=allocation.project
                 ).exists():
-                    raise Exception(
-                        f"⚠️ User {u} has not been added to the project {allocation.project.name}"
+                    print(
+                        f"⚠️ Unable to add user '{u}' to allocation because they have not been added to project {allocation.project.name}"
                     )
+                    continue
 
                 if user:
                     _, created = AllocationUser.objects.get_or_create(

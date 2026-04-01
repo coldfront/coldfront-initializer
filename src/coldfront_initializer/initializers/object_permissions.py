@@ -60,8 +60,7 @@ class ObjectPermissionInitializer(BaseInitializer):
                     if group:
                         object_permission.groups.add(group)
                         print(
-                            " 👥 Assigned group %s object permission of %s"
-                            % (groupname, object_permission.name)
+                            f" 👥 Assigned group {groupname} object permission of {object_permission.name}"
                         )
 
             if permission_details.get("users", 0):
@@ -71,8 +70,7 @@ class ObjectPermissionInitializer(BaseInitializer):
                     if user:
                         object_permission.users.add(user)
                         print(
-                            " 👤 Assigned user %s object permission of %s"
-                            % (username, object_permission.name)
+                            f" 👤 Assigned user {username} object permission of {object_permission.name}"
                         )
 
             object_permission.save()

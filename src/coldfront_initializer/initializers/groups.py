@@ -24,7 +24,7 @@ class GroupInitializer(BaseInitializer):
                 user = User.objects.get(username=username)
                 if user:
                     group.users.add(user)
-                    print(" 👤 Assigned user %s to group %s" % (username, group.name))
+                    print(f" 👤 Assigned user {username} to group {group.name}")
             group.save()
 
 

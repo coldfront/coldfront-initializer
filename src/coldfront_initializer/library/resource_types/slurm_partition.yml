@@ -21,7 +21,7 @@
         description: Must conform to the Slurm specification format colon separated
         type: string
         requiredAction: change
-      slurm_account:
+      slurm_account_name:
         title: Surm Account Name
         type: string
         requiredAction: change
