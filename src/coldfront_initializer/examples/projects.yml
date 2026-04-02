@@ -3,6 +3,7 @@
   status: active
   description: We want to estimate the quark chemical potential of a rotating sample of plasma.
   owner: cgray
+  tenant: Computer Science
   users:
     - cgray
     - astewart
@@ -21,6 +22,7 @@
   created: "2002-10-29T16:11:51.774166Z"
   description: This purpose of this project is to measure the critical behavior of quantum Hall transitions
   owner: sfoster
+  tenant: Physics
   users:
     - sfoster
     - arivera

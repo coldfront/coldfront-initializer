@@ -85,6 +85,36 @@ users.ro:
   groups:
     - principal_investigators
     - project_manager
+    - center_director
+
+physics_approver.allocations.rw:
+  actions:
+    - view
+    - approve
+    - deny
+  description: "Permission to approve/deny allocations for Physics tenant"
+  enabled: true
+  object_types:
+    ras:
+      - allocation
+  constraints:
+    - tenant__name: "Physics"
+    - project__tenant__name: "Physics"
+  groups:
+    - center_director
+
+physics_approver.projects.ro:
+  actions:
+    - view
+  description: "Permission to view projects for the Physics tenant"
+  enabled: true
+  object_types:
+    ras:
+      - project
+  constraints:
+    - tenant__name: "Physics"
+  groups:
+    - center_director
 
 allocation_slurm_attrs.rw:
   actions:

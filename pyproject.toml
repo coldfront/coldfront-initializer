@@ -1,6 +1,6 @@
 [project]
 name = "coldfront-initializer"
-version = "0.0.4"
+version = "0.0.5"
 description = "Load data into ColdFront from yaml files"
 readme = "README.md"
 authors = [

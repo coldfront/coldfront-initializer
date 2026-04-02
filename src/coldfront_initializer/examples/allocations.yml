@@ -3,6 +3,7 @@
   resource: University HPC
   status: new
   justification: Need more resources
+  tenant: Computer Science
   users:
     - cgray
     - astewart
@@ -15,6 +16,7 @@
   resource: University HPC
   justification: I lack the necessary resources
   status: approved
+  tenant: Physics
   users:
     - sfoster
     - arivera
@@ -29,6 +31,7 @@
   resource: Commercial Software X
   justification: Need required software
   status: new
+  tenant: Physics
   users:
     - sfoster
     - arivera
