@@ -1,12 +1,17 @@
 - name: University HPC
   slug: uhpc
   status: active
-  resource_type: Slurm Cluster
-  attribute_data:
-    architecture: x86_64
-    cores: 10000
-    nodes: 250
-    slurm_specs: "QOS+=general-compute,debug,scavenger:Fairshare=100"
+  resource_type: Cluster
+  schema:
+    properties:
+      account:
+        title: Account Name
+        type: string
+        requiredAction: change
+      su:
+        description: Service Units
+        title: SUs
+        type: number
   custom_field_data:
     is_awesome: "True"
   tags:
@@ -16,5 +21,20 @@
   slug: comsoft-x
   status: active
   resource_type: Commercial Software
-  attribute_data:
-    lic_count: 200
+  schema:
+    properties:
+      lic_count:
+        title: License Count
+        type: integer
+        requiredAction: change
+      eula:
+        title: EULA
+        description: |
+          The University HPC has an agreement to allow use of their software by
+          any staff and students for academic use only. If you decide not to
+          agree to the terms, we will delete the allocation request for you. Do
+          you agree to these terms?
+        type: string
+        enum:
+          - No
+          - Yes

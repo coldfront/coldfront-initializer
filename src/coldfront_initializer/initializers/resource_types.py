@@ -4,7 +4,6 @@
 
 from coldfront.core.choices import ColorChoices
 from coldfront.ras.models import ResourceType
-from coldfront.utils.jsonschema import validate_schema
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
@@ -27,10 +26,6 @@ class ResourceTypeInitializer(BaseInitializer):
                 for color_tpl in ColorChoices:
                     if color in color_tpl:
                         params["color"] = color_tpl[0]
-
-            for schema in ["schema", "allocation_schema"]:
-                if schema in params:
-                    validate_schema(params[schema])
 
             matching_params, defaults = self.split_params(params)
             resource_type, created = ResourceType.objects.get_or_create(

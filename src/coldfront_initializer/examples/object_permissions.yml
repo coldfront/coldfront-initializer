@@ -55,25 +55,6 @@ project_users.rw:
     - project__owner: $user
     - project__users__user: $user
 
-allocation_users.rw:
-  actions:
-    - view
-    - add
-    - change
-    - delete
-  description: "Permission to manage allocation users"
-  enabled: true
-  object_types:
-    ras:
-      - allocationuser
-  groups:
-    - principal_investigators
-    - project_manager
-  constraints:
-    - allocation__owner: $user
-    - allocation__project__owner: $user
-    - allocation__users__user: $user
-
 users.ro:
   actions:
     - view

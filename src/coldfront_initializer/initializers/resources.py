@@ -4,6 +4,7 @@
 
 from coldfront.ras.models import Resource, ResourceType
 from coldfront.tenancy.models import Tenant
+from coldfront.utils.jsonschema import validate_schema
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
@@ -26,6 +27,9 @@ class ResourceInitializer(BaseInitializer):
             custom_field_data = self.pop_custom_fields(params)
             tags = params.pop("tags", None)
             create_date = params.pop("created", None)
+
+            if "schema" in params:
+                validate_schema(params["schema"])
 
             for assoc, details in OPTIONAL_ASSOCS.items():
                 if assoc in params:
