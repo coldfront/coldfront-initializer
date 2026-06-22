@@ -19,7 +19,7 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
-MATCH_PARAMS = ["owner", "project", "resource_object_type", "resource_object_id"]
+MATCH_PARAMS = ["slug", "owner", "project", "resource_object_type", "resource_object_id"]
 REQUIRED_ASSOCS = {
     "owner": (User, "username"),
     "project": (Project, "name"),

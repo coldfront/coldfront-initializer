@@ -1,5 +1,5 @@
-- name: Awesome
-  slug: is-awesome
+- name: Faculty
+  slug: faculty
   color: Pink
 - name: Payment Sent
   slug: paymnet-sent

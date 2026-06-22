@@ -33,6 +33,7 @@ class Command(BaseCommand):
 
             if user_response != "yes":
                 self.stdout.write("Please enter 'yes' if you wish to load test data.")
+                return
 
         intializer_base_path = os.path.dirname(coldfront_initializer.__file__)
         intializer_path = f"{intializer_base_path}/examples"

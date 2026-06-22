@@ -1,8 +1,3 @@
-- name: Cluster
-  slug: cluster
-  description: A HPC cluster
-  color: Blue
-
 - name: Commercial Software
   slug: com-soft
   description: A commercial software product EULA required

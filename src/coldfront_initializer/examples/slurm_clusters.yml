@@ -1,0 +1,12 @@
+- name: snowflake
+  description: Snowflake HPC cluster
+  default_qos: normal
+  qos_list:
+    - normal
+    - debug
+    - general-compute
+    - scavenger
+  fairshare: 1
+  classification: academic
+  tags:
+    - Faculty

@@ -1,0 +1,37 @@
+- name: gpu
+  cluster: snowflake
+  description: GPU compute partition
+  max_jobs: 4
+  max_submit_jobs: 10
+  max_tres_per_job:
+    node: 5
+    cpu: 20
+  max_tres_per_node:
+    gpu: 8
+  max_tres_mins_per_job:
+    cpu: 360
+  fairshare: 1
+  qos_list:
+    - gpu
+  allow_accounts:
+    - slrm-prj-1000001
+    - slrm-prj-1000002
+  tags:
+    - Faculty
+
+- name: general-compute
+  cluster: snowflake
+  description: General compute partition
+  max_jobs: 8
+  max_submit_jobs: 20
+  fairshare: 1
+  qos_list:
+    - normal
+    - debug
+    - general-compute
+    - scavenger
+  allow_groups:
+    - principal_investigators
+    - project_managers
+  tags:
+    - Faculty

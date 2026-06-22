@@ -1,0 +1,20 @@
+- name: normal
+  description: Normal quality of service
+
+- name: gpu
+  description: GPU nodes
+
+- name: debug
+  description: Debug queue
+
+- name: general-compute
+  description: General compute nodes
+
+- name: industry
+  description: Industry partner access
+
+- name: scavenger
+  description: Scavenger queue for low-priority jobs
+
+- name: preprod
+  description: Pre-production testing

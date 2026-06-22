@@ -148,8 +148,14 @@ INITIALIZER_ORDER = (
     "tenants",
     "resource_types",
     "resources",
+    "slurm_qos",
+    "slurm_clusters",
+    "slurm_partitions",
     "projects",
     "allocations",
+    "slurm_accounts",
+    "slurm_associations",
+    "slurm_users",
 )
 
 

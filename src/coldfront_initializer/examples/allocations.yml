@@ -1,32 +1,74 @@
-- project: Angular momentum in QGP holography
+- slug: alloc-1000001
+  project: Angular momentum in QGP holography
   owner: cgray
-  resource_object: "ras.resource:University HPC"
+  resource_object: "ras.resource:Commercial Software X"
   status: new
-  justification: Need more resources
+  justification: Need software for my research
   tenant: Computer Science
-  custom_field_data:
-    allocation_code: 1001
-
-- project: Measuring critical behavior of quantum Hall transitions
-  owner: sfoster
-  resource_object: "ras.resource:University HPC"
-  justification: I lack the necessary resources
-  status: new
-  tenant: Physics
   attribute_data:
-    su: 1000
-  tags:
-    - Payment Sent
+    eula: "Yes"
+    lic_count: 10
   custom_field_data:
-    allocation_code: 1002
+    allocation_code: 1000001
 
-- project: Measuring critical behavior of quantum Hall transitions
+- slug: alloc-1000002
+  project: Measuring critical behavior of quantum Hall transitions
   owner: sfoster
   resource_object: "ras.resource:Commercial Software X"
   justification: Need required software
   status: new
   tenant: Physics
+  tags:
+    - Payment Sent
   attribute_data:
     eula: "Yes"
   custom_field_data:
-    allocation_code: 1003
+    allocation_code: 1000002
+
+- slug: alloc-2000001
+  project: Angular momentum in QGP holography
+  owner: cgray
+  resource_object: "slurm.slurmcluster:snowflake"
+  status: active
+  justification: Research allocation on snowflake cluster
+  tenant: Computer Science
+  attribute_data:
+    su: 5000
+  custom_field_data:
+    allocation_code: 2000001
+
+- slug: alloc-2000002
+  project: Measuring critical behavior of quantum Hall transitions
+  owner: sfoster
+  resource_object: "slurm.slurmpartition:gpu"
+  status: active
+  justification: GPU compute for quantum Hall simulations
+  tenant: Physics
+  attribute_data:
+    su: 2000
+  custom_field_data:
+    allocation_code: 2000002
+
+- slug: alloc-2000003
+  project: Measuring critical behavior of quantum Hall transitions
+  owner: sfoster
+  resource_object: "slurm.slurmpartition:general-compute"
+  status: active
+  justification: General compute for data processing
+  tenant: Physics
+  attribute_data:
+    su: 1000
+  custom_field_data:
+    allocation_code: 2000003
+
+- slug: alloc-2000004
+  project: Angular momentum in QGP holography
+  owner: cgray
+  resource_object: "slurm.slurmpartition:gpu"
+  status: approved
+  justification: GPU allocation for QGP simulations
+  tenant: Computer Science
+  attribute_data:
+    su: 3000
+  custom_field_data:
+    allocation_code: 2004

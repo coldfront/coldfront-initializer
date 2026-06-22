@@ -16,4 +16,10 @@ from .resources import ResourceInitializer
 from .tags import TagInitializer
 from .tenant_groups import TenantGroupInitializer
 from .tenants import TenantInitializer
+from .slurm_accounts import SlurmAccountInitializer
+from .slurm_associations import SlurmAssociationInitializer
+from .slurm_clusters import SlurmClusterInitializer
+from .slurm_partitions import SlurmPartitionInitializer
+from .slurm_qos import SlurmQOSInitializer
+from .slurm_users import SlurmUserInitializer
 from .users import UserInitializer
