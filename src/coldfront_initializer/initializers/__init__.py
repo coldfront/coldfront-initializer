@@ -23,3 +23,7 @@ from .slurm_partitions import SlurmPartitionInitializer
 from .slurm_qos import SlurmQOSInitializer
 from .slurm_users import SlurmUserInitializer
 from .users import UserInitializer
+from .storage_clusters import StorageClusterInitializer
+from .storage_resources import StorageResourceInitializer
+from .storage_snapshot_policies import StorageSnapshotPolicyInitializer
+from .storage_quotas import StorageQuotaInitializer

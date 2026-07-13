@@ -1,15 +1,15 @@
-- name: slrm-prj-1000001
+- name: slurm-p1000001
   cluster: snowflake
-  description: Slurm account for prj-1000001
+  description: Slurm account for p1000001
   fairshare: 100
   qos_list:
     - scavenger
   tags:
     - Faculty
 
-- name: slrm-prj-1000002
+- name: slurm-p1000002
   cluster: snowflake
-  description: Slurm account for prj-1000002
+  description: Slurm account for p1000002
   fairshare: 100
   qos_list:
     - debug

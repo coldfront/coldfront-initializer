@@ -1,0 +1,6 @@
+- cluster: VAST-A
+  name: daily-7d
+  interval: daily
+  retention_days: 7
+  extra_config:
+    enabled: true

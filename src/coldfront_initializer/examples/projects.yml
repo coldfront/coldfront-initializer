@@ -1,5 +1,5 @@
 - name: Angular momentum in QGP holography
-  slug: prj-1000001
+  slug: p1000001
   status: active
   description: We want to estimate the quark chemical potential of a rotating sample of plasma.
   owner: cgray
@@ -17,7 +17,7 @@
     project_code: "PRJ-00002"
 
 - name: Measuring critical behavior of quantum Hall transitions
-  slug: prj-1000002
+  slug: p1000002
   status: active
   created: "2002-10-29T16:11:51.774166Z"
   description: This purpose of this project is to measure the critical behavior of quantum Hall transitions

@@ -14,8 +14,8 @@
   qos_list:
     - gpu
   allow_accounts:
-    - slrm-prj-1000001
-    - slrm-prj-1000002
+    - slurm-p1000001
+    - slurm-p1000002
   tags:
     - Faculty
 

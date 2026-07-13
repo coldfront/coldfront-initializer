@@ -1,4 +1,4 @@
-- slug: alloc-1000001
+- slug: a1000001
   project: Angular momentum in QGP holography
   owner: cgray
   resource_object: "ras.resource:Commercial Software X"
@@ -11,7 +11,7 @@
   custom_field_data:
     allocation_code: 1000001
 
-- slug: alloc-1000002
+- slug: a1000002
   project: Measuring critical behavior of quantum Hall transitions
   owner: sfoster
   resource_object: "ras.resource:Commercial Software X"
@@ -25,7 +25,7 @@
   custom_field_data:
     allocation_code: 1000002
 
-- slug: alloc-2000001
+- slug: a2000001
   project: Angular momentum in QGP holography
   owner: cgray
   resource_object: "slurm.slurmcluster:snowflake"
@@ -37,7 +37,7 @@
   custom_field_data:
     allocation_code: 2000001
 
-- slug: alloc-2000002
+- slug: a2000002
   project: Measuring critical behavior of quantum Hall transitions
   owner: sfoster
   resource_object: "slurm.slurmpartition:gpu"
@@ -49,7 +49,7 @@
   custom_field_data:
     allocation_code: 2000002
 
-- slug: alloc-2000003
+- slug: a2000003
   project: Measuring critical behavior of quantum Hall transitions
   owner: sfoster
   resource_object: "slurm.slurmpartition:general-compute"
@@ -61,7 +61,7 @@
   custom_field_data:
     allocation_code: 2000003
 
-- slug: alloc-2000004
+- slug: a2000004
   project: Angular momentum in QGP holography
   owner: cgray
   resource_object: "slurm.slurmpartition:gpu"

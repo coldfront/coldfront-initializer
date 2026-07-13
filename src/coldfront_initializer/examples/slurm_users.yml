@@ -1,60 +1,60 @@
 - user: cgray
   cluster: snowflake
-  default_account: slrm-prj-1000001
+  default_account: slurm-p1000001
   default_wckey: research
   default_qos: normal
   admin_level: Admin
 
 - user: astewart
   cluster: snowflake
-  default_account: slrm-prj-1000001
+  default_account: slurm-p1000001
   default_wckey: research
   default_qos: normal
 
 - user: bmitchell
   cluster: snowflake
-  default_account: slrm-prj-1000001
+  default_account: slurm-p1000001
   default_wckey: research
   default_qos: normal
 
 - user: jbutler
   cluster: snowflake
-  default_account: slrm-prj-1000001
+  default_account: slurm-p1000001
   default_wckey: research
   default_qos: normal
 
 - user: lbell
   cluster: snowflake
-  default_account: slrm-prj-1000001
+  default_account: slurm-p1000001
   default_wckey: research
   default_qos: normal
 
 - user: sfoster
   cluster: snowflake
-  default_account: slrm-prj-1000002
+  default_account: slurm-p1000002
   default_wckey: quantum
   default_qos: normal
 
 - user: arivera
   cluster: snowflake
-  default_account: slrm-prj-1000002
+  default_account: slurm-p1000002
   default_wckey: quantum
   default_qos: normal
 
 - user: bperez
   cluster: snowflake
-  default_account: slrm-prj-1000002
+  default_account: slurm-p1000002
   default_wckey: quantum
   default_qos: normal
 
 - user: clee
   cluster: snowflake
-  default_account: slrm-prj-1000002
+  default_account: slurm-p1000002
   default_wckey: quantum
   default_qos: normal
 
 - user: rwilson
   cluster: snowflake
-  default_account: slrm-prj-1000002
+  default_account: slurm-p1000002
   default_wckey: quantum
   default_qos: normal

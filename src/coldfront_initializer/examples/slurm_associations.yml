@@ -1,5 +1,5 @@
-- allocation: alloc-2000001
-  slurm_account: slrm-prj-1000001
+- allocation: a2000001
+  slurm_account: slurm-p1000001
   parent: null
   default_qos: normal
   fairshare: 1
@@ -11,8 +11,8 @@
   max_tres_mins_per_job:
     cpu: 3600
 
-- allocation: alloc-2000002
-  slurm_account: slrm-prj-1000002
+- allocation: a2000002
+  slurm_account: slurm-p1000002
   parent: null
   default_qos: normal
   fairshare: 1
@@ -24,16 +24,16 @@
   max_tres_mins_per_job:
     cpu: 360
 
-- allocation: alloc-2000003
-  slurm_account: slrm-prj-1000002
+- allocation: a2000003
+  slurm_account: slurm-p1000002
   parent: null
   default_qos: normal
   fairshare: 1
   max_jobs: 8
   max_submit_jobs: 20
 
-- allocation: alloc-2000004
-  slurm_account: slrm-prj-1000001
+- allocation: a2000004
+  slurm_account: slurm-p1000001
   parent: null
   default_qos: normal
   fairshare: 1
