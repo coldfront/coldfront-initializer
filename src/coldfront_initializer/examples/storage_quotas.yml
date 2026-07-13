@@ -1,4 +1,4 @@
-- allocation: a2000001
+- allocation: a3000001
   storage: Tier1
   clusters:
     - VAST-A
@@ -9,7 +9,7 @@
   share_type: posix
   snapshot_policy: daily-7d
 
-- allocation: a2000002
+- allocation: a3000002
   storage: Tier1
   clusters:
     - VAST-A
@@ -19,7 +19,7 @@
   hard_limit: 20000000000000 # 20 TB
   share_type: posix
 
-- allocation: a2000003
+- allocation: a3000003
   storage: Tier2
   clusters:
     - VAST-A
@@ -30,7 +30,7 @@
   hard_limit: 1000000000000 # 1 TB
   share_type: nfs
 
-- allocation: a2000004
+- allocation: a3000004
   storage: Tier1
   path: "/tier1/p1000001/2"
   owning_user: cgray

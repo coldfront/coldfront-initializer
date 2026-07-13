@@ -72,3 +72,35 @@
     su: 3000
   custom_field_data:
     allocation_code: 2004
+
+- slug: a3000001
+  project: Angular momentum in QGP holography
+  owner: cgray
+  resource_object: "storage.storageresource:Tier1"
+  status: approved
+  justification: Storage resources needed
+  tenant: Computer Science
+
+- slug: a3000002
+  project: Measuring critical behavior of quantum Hall transitions
+  owner: sfoster
+  resource_object: "storage.storageresource:Tier1"
+  status: active
+  justification: Storage for quantum Hall simulations
+  tenant: Physics
+
+- slug: a3000003
+  project: Measuring critical behavior of quantum Hall transitions
+  owner: sfoster
+  resource_object: "storage.storageresource:Tier2"
+  status: approved
+  justification: General storage for data processing
+  tenant: Physics
+
+- slug: a3000004
+  project: Angular momentum in QGP holography
+  owner: cgray
+  resource_object: "storage.storageresource:Tier1"
+  status: requested
+  justification: GPU allocation for QGP simulations
+  tenant: Computer Science

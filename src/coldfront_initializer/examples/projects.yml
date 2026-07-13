@@ -1,6 +1,5 @@
 - name: Angular momentum in QGP holography
   slug: p1000001
-  status: active
   description: We want to estimate the quark chemical potential of a rotating sample of plasma.
   owner: cgray
   tenant: Computer Science
@@ -18,7 +17,6 @@
 
 - name: Measuring critical behavior of quantum Hall transitions
   slug: p1000002
-  status: active
   created: "2002-10-29T16:11:51.774166Z"
   description: This purpose of this project is to measure the critical behavior of quantum Hall transitions
   owner: sfoster
