@@ -1,6 +1,7 @@
 - name: gpu
   cluster: snowflake
   description: GPU compute partition
+  nodes: cpn-[12-13]
   max_jobs: 4
   max_submit_jobs: 10
   max_tres_per_job:
@@ -25,6 +26,7 @@
   max_jobs: 8
   max_submit_jobs: 20
   fairshare: 1
+  nodes: cpn-[10-20]
   qos_list:
     - normal
     - debug
