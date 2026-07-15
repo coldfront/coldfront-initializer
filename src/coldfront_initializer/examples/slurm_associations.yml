@@ -12,7 +12,7 @@
     cpu: 3600
 
 - allocation: a2000002
-  slurm_account: slurm-p1000002
+  slurm_account: snowflake:slurm-p1000002
   parent: null
   default_qos: normal
   fairshare: 1
@@ -33,7 +33,7 @@
   max_submit_jobs: 20
 
 - allocation: a2000004
-  slurm_account: slurm-p1000001
+  slurm_account: snowflake:slurm-p1000001
   parent: null
   default_qos: normal
   fairshare: 1

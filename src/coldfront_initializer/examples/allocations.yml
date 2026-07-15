@@ -40,7 +40,7 @@
 - slug: a2000002
   project: Measuring critical behavior of quantum Hall transitions
   owner: sfoster
-  resource_object: "slurm.slurmpartition:gpu"
+  resource_object: "slurm.slurmpartition:slug=snowflake-gpu"
   status: active
   justification: GPU compute for quantum Hall simulations
   tenant: Physics

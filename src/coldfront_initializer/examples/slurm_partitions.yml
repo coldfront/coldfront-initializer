@@ -1,5 +1,6 @@
 - name: gpu
   cluster: snowflake
+  slug: snowflake-gpu
   description: GPU compute partition
   nodes: cpn-[12-13]
   max_jobs: 4
@@ -22,6 +23,7 @@
 
 - name: general-compute
   cluster: snowflake
+  slug: snowflake-general-compute
   description: General compute partition
   max_jobs: 8
   max_submit_jobs: 20

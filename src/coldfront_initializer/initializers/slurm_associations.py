@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from coldfront.ras.models import Allocation
-from coldfront.slurm.models import SlurmAccount, SlurmAssociation, SlurmQOS
+from coldfront.slurm.models import SlurmAccount, SlurmAssociation, SlurmCluster, SlurmQOS
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
@@ -14,8 +14,6 @@ from coldfront_initializer.initializers.base import (
 MATCH_PARAMS = ["allocation"]
 
 OPTIONAL_FK = {
-    "slurm_account": (SlurmAccount, "name"),
-    "parent": (SlurmAccount, "name"),
     "default_qos": (SlurmQOS, "name"),
 }
 
@@ -41,7 +39,39 @@ class SlurmAssociationInitializer(BaseInitializer):
                 )
                 continue
 
-            # Resolve optional FK references
+            # Resolve slurm_account and parent (may be cluster:account format)
+            for assoc in ("slurm_account", "parent"):
+                if assoc in params:
+                    val = params[assoc]
+                    if val is None or val == "null":
+                        params[assoc] = None
+                        continue
+                    if ":" in val:
+                        cluster_name, acct_name = val.split(":", 1)
+                        try:
+                            cluster = SlurmCluster.objects.get(name=cluster_name)
+                            params[assoc] = SlurmAccount.objects.get(
+                                name=acct_name, cluster=cluster
+                            )
+                        except (SlurmCluster.DoesNotExist, SlurmAccount.DoesNotExist):
+                            print(
+                                f"⚠️  SlurmAccount '{acct_name}' on cluster "
+                                f"'{cluster_name}' not found, "
+                                f"setting {assoc}=None"
+                            )
+                            params[assoc] = None
+                    else:
+                        # Legacy: lookup by name only
+                        try:
+                            params[assoc] = SlurmAccount.objects.get(name=val)
+                        except SlurmAccount.DoesNotExist:
+                            print(
+                                f"⚠️  SlurmAccount with name='{val}' not found, "
+                                f"setting {assoc}=None"
+                            )
+                            params[assoc] = None
+
+            # Resolve remaining optional FK references (default_qos)
             for assoc, details in OPTIONAL_FK.items():
                 if assoc in params:
                     val = params[assoc]
