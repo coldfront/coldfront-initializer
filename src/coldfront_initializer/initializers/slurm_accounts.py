@@ -39,7 +39,9 @@ class SlurmAccountInitializer(BaseInitializer):
                 if assoc in params:
                     m2m_values[assoc] = params.pop(assoc)
 
-            matching_params, defaults = self.split_params(params)
+            matching_params, defaults = self.split_params(
+                params, unique_params=["name", "cluster"]
+            )
             account, created = SlurmAccount.objects.get_or_create(
                 **matching_params, defaults=defaults
             )
@@ -52,9 +54,7 @@ class SlurmAccountInitializer(BaseInitializer):
                 if assoc in m2m_values:
                     model, field = details
                     getattr(account, assoc).set(
-                        model.objects.filter(
-                            **{field + "__in": m2m_values[assoc]}
-                        )
+                        model.objects.filter(**{field + "__in": m2m_values[assoc]})
                     )
 
             account.save()

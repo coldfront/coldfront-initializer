@@ -9,7 +9,6 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
-
 REQUIRED_FK = {
     "cluster": (SlurmCluster, "name"),
 }
@@ -42,7 +41,9 @@ class SlurmPartitionInitializer(BaseInitializer):
                 if assoc in params:
                     m2m_values[assoc] = params.pop(assoc)
 
-            matching_params, defaults = self.split_params(params)
+            matching_params, defaults = self.split_params(
+                params, unique_params=["name", "cluster"]
+            )
             partition, created = SlurmPartition.objects.get_or_create(
                 **matching_params, defaults=defaults
             )
@@ -62,9 +63,7 @@ class SlurmPartitionInitializer(BaseInitializer):
                     else:
                         model_cls = model
                     getattr(partition, assoc).set(
-                        model_cls.objects.filter(
-                            **{field + "__in": m2m_values[assoc]}
-                        )
+                        model_cls.objects.filter(**{field + "__in": m2m_values[assoc]})
                     )
 
             partition.save()

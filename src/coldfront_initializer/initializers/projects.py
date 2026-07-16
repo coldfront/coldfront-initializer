@@ -4,7 +4,7 @@
 
 from coldfront.ras.models import Project, ProjectUser
 from coldfront.tenancy.models import Tenant
-from coldfront.users.models import User
+from coldfront.users.models import Group, User
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
@@ -16,6 +16,7 @@ REQUIRED_ASSOCS = {
 }
 OPTIONAL_ASSOCS = {
     "tenant": (Tenant, "name"),
+    "group": (Group, "name"),
 }
 
 
