@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from coldfront.core.models import ObjectType
-from coldfront.users.models import Group, ObjectPermission, User
+from coldfront.users.models import ObjectPermission
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
@@ -52,26 +52,6 @@ class ObjectPermissionInitializer(BaseInitializer):
                                 )
             if created:
                 print("🔓 Created object permission", object_permission.name)
-
-            if permission_details.get("groups", 0):
-                for groupname in permission_details["groups"]:
-                    group = Group.objects.filter(name=groupname).first()
-
-                    if group:
-                        object_permission.groups.add(group)
-                        print(
-                            f" 👥 Assigned group {groupname} object permission of {object_permission.name}"
-                        )
-
-            if permission_details.get("users", 0):
-                for username in permission_details["users"]:
-                    user = User.objects.filter(username=username).first()
-
-                    if user:
-                        object_permission.users.add(user)
-                        print(
-                            f" 👤 Assigned user {username} object permission of {object_permission.name}"
-                        )
 
             object_permission.save()
 

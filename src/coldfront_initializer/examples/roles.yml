@@ -1,0 +1,41 @@
+# Roles bundle ObjectPermissions into reusable permission profiles.
+# User/group role assignments happen in users.yml and groups.yml.
+
+principal_investigator:
+  description: "Principal Investigator - can manage their own projects and allocations"
+  weight: 10
+  object_permissions:
+    - projects.rw_owner
+    - allocations.ro_owner
+    - allocations.request
+    - allocations.renew_owner
+    - change_requests.ro_owner
+    - change_requests.add_owner
+    - project_users.rw_owner
+    - users.ro
+    - comments.ro_owner
+    - comments.add_owner
+    - comments.own_edit_delete
+
+center_director:
+  description: "Center Director - can approve/deny all allocations and view all projects"
+  weight: 20
+  object_permissions:
+    - allocations.approve_deny
+    - projects.ro
+    - project_users.ro
+    - comments.ro
+    - comments.add
+    - comments.own_edit_delete
+    - users.ro
+
+physics_reviewer:
+  description: "Physics Reviewer - can view Physics tenant projects and approve/deny Physics allocations"
+  weight: 30
+  object_permissions:
+    - physics.projects.ro
+    - physics.allocations.approve_deny
+    - comments.ro
+    - comments.add
+    - comments.own_edit_delete
+    - users.ro

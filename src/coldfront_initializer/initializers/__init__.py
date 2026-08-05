@@ -22,6 +22,7 @@ from .slurm_clusters import SlurmClusterInitializer
 from .slurm_partitions import SlurmPartitionInitializer
 from .slurm_qos import SlurmQOSInitializer
 from .slurm_users import SlurmUserInitializer
+from .roles import RoleInitializer
 from .users import UserInitializer
 from .storage_clusters import StorageClusterInitializer
 from .storage_resources import StorageResourceInitializer

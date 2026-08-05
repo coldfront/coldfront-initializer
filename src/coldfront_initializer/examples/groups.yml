@@ -1,11 +1,22 @@
-center_director:
-  users:
-    - csimmons
-principal_investigators:
+pi:
   users:
     - cgray
     - sfoster
-project_managers:
+  roles:
+    - principal_investigator
+
+grp001:
   users:
+    - cgray
     - astewart
+    - bmitchell
+    - jbutler
+    - lbell
+
+grp002:
+  users:
+    - sfoster
     - arivera
+    - bperez
+    - clee
+    - rwilson

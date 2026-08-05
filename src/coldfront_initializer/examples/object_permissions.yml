@@ -1,56 +1,91 @@
-# Example:
-# all.ro:
-#   actions:
-#     - view
-#   description: 'Read Only for All Objects'
-#   enabled: true
-#   groups:
-#     - applications
-#     - readers
-#   object_types: all
-#   users:
-#     - jdoe
-projects.rw:
+# ObjectPermission records define reusable actions + constraints.
+# User/group assignments happen in users.yml and groups.yml instead.
+#
+# Constraint tokens:
+#   $user - replaced with the current user's primary key at runtime
+
+# --- Permissions for principal_investigator role ---
+
+projects.rw_owner:
   actions:
     - view
     - add
     - change
     - delete
-  description: "Permission to manage your own projects"
+  description: "Manage your own projects"
   enabled: true
   object_types:
     ras:
       - project
-  groups:
-    - principal_investigators
   constraints:
     owner: $user
 
-allocations.request:
+allocations.ro_owner:
   actions:
-    - request
-  description: "Permission to request allocations"
+    - view
+  description: "View allocations on your own projects"
   enabled: true
   object_types:
     ras:
       - allocation
-  groups:
-    - principal_investigators
+  constraints:
+    project__owner: $user
 
-project_users.rw:
+allocations.request:
+  actions:
+    - request
+  description: "Request allocations for your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - allocation
+  constraints:
+    project__owner: $user
+
+allocations.renew_owner:
+  actions:
+    - renew
+  description: "Renew allocations on your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - allocation
+  constraints:
+    project__owner: $user
+
+change_requests.ro_owner:
+  actions:
+    - view
+  description: "View change requests on allocations on your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - allocationchangerequest
+  constraints:
+    allocation__project__owner: $user
+
+change_requests.add_owner:
+  actions:
+    - add
+  description: "Request changes to allocations on your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - allocationchangerequest
+  constraints:
+    allocation__project__owner: $user
+
+project_users.rw_owner:
   actions:
     - view
     - add
     - change
     - delete
-  description: "Permission to manage project users"
+  description: "Manage project users for projects you own or belong to"
   enabled: true
   object_types:
     ras:
       - projectuser
-  groups:
-    - principal_investigators
-    - project_manager
   constraints:
     - project__owner: $user
     - project__users__user: $user
@@ -58,59 +93,127 @@ project_users.rw:
 users.ro:
   actions:
     - view
-  description: "Permission to view all users"
+  description: "View all users"
   enabled: true
   object_types:
     users:
       - user
-  groups:
-    - principal_investigators
-    - project_manager
-    - center_director
 
-physics_approver.allocations.rw:
+project_users.ro:
+  actions:
+    - view
+  description: "View all project users"
+  enabled: true
+  object_types:
+    ras:
+      - projectuser
+
+# --- Permissions for center_director role ---
+
+allocations.approve_deny:
   actions:
     - view
     - approve
     - deny
-  description: "Permission to approve/deny allocations for Physics tenant"
+  description: "View, approve, and deny all allocations"
   enabled: true
   object_types:
     ras:
       - allocation
-  constraints:
-    - tenant__name: "Physics"
-    - project__tenant__name: "Physics"
-  groups:
-    - center_director
 
-physics_approver.projects.ro:
+projects.ro:
   actions:
     - view
-  description: "Permission to view projects for the Physics tenant"
+  description: "View all projects"
+  enabled: true
+  object_types:
+    ras:
+      - project
+
+comments.ro:
+  actions:
+    - view
+  description: "View comments on allocations"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+
+comments.ro_owner:
+  actions:
+    - view
+  description: "View comments on your own allocations"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+  constraints:
+    assigned_object_type__model: "allocation"
+    assigned_object_id__in:
+      $queryset:
+        model: ras.allocation
+        filter:
+          project__owner: $user
+
+comments.add:
+  actions:
+    - add
+  description: "Add comments to allocations"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+
+comments.add_owner:
+  actions:
+    - add
+  description: "Add comments to your own allocations"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+  constraints:
+    assigned_object_type__model: "allocation"
+    assigned_object_id__in:
+      $queryset:
+        model: ras.allocation
+        filter:
+          project__owner: $user
+
+comments.own_edit_delete:
+  actions:
+    - change
+    - delete
+  description: "Edit and delete your own comments"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+  constraints:
+    created_by: $user
+
+# --- Permissions for physics_reviewer role ---
+
+physics.projects.ro:
+  actions:
+    - view
+  description: "View projects in the Physics tenant"
   enabled: true
   object_types:
     ras:
       - project
   constraints:
-    - tenant__name: "Physics"
-  groups:
-    - center_director
+    tenant__name: "Physics"
 
-allocation_slurm_attrs.rw:
+physics.allocations.approve_deny:
   actions:
-    - slurm_attrs
-  description: "Permission to edit slurm attributes on an allocation"
+    - view
+    - approve
+    - deny
+  description: "View, approve, and deny allocations belonging to Physics tenant projects"
   enabled: true
   object_types:
     ras:
       - allocation
-
-project_code_field.rw:
-  actions:
-    - project_code
-  description: "Permission to edit project code custom field on a project"
-  enabled: true
-  object_types:
-    ras:
-      - project
+  constraints:
+    project__tenant__name: "Physics"

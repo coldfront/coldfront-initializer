@@ -4,7 +4,7 @@
     - VAST-A
   path: "/tier1/p1000001/a3000001"
   owning_user: cgray
-  owning_group: principal_investigators
+  owning_group: pi
   hard_limit_bytes: 10000000000000 # 10 TB
   share_type: posix
   snapshot_policy: daily-7d
@@ -15,7 +15,7 @@
     - VAST-A
   path: "/tier1/p1000002/a3000002"
   owning_user: sfoster
-  owning_group: principal_investigators
+  owning_group: pi
   hard_limit_bytes: 20000000000000 # 20 TB
   share_type: posix
 
@@ -26,7 +26,7 @@
     - VAST-B
   path: "/tier2/p1000002/a3000003"
   owning_user: sfoster
-  owning_group: principal_investigators
+  owning_group: pi
   hard_limit_bytes: 1000000000000 # 1 TB
   share_type: nfs
 
@@ -34,6 +34,6 @@
   storage: Tier1
   path: "/tier1/p1000001/a3000004"
   owning_user: cgray
-  owning_group: principal_investigators
+  owning_group: pi
   hard_limit_bytes: 15000000000000 # 15 TB
   share_type: posix

@@ -9,7 +9,7 @@
     eula: "Yes"
     lic_count: 10
   custom_field_data:
-    allocation_code: 1000001
+    allocation_code: 1001
 
 - slug: a1000002
   project: Measuring critical behavior of quantum Hall transitions
@@ -23,7 +23,7 @@
   attribute_data:
     eula: "Yes"
   custom_field_data:
-    allocation_code: 1000002
+    allocation_code: 1002
 
 - slug: a2000001
   project: Angular momentum in QGP holography
@@ -35,7 +35,7 @@
   attribute_data:
     su: 5000
   custom_field_data:
-    allocation_code: 2000001
+    allocation_code: 2001
 
 - slug: a2000002
   project: Measuring critical behavior of quantum Hall transitions
@@ -47,7 +47,7 @@
   attribute_data:
     su: 2000
   custom_field_data:
-    allocation_code: 2000002
+    allocation_code: 2002
 
 - slug: a2000003
   project: Measuring critical behavior of quantum Hall transitions
@@ -59,7 +59,7 @@
   attribute_data:
     su: 1000
   custom_field_data:
-    allocation_code: 2000003
+    allocation_code: 2003
 
 - slug: a2000004
   project: Angular momentum in QGP holography

@@ -37,7 +37,7 @@
     - scavenger
   qos: general-compute
   allow_groups:
-    - principal_investigators
-    - project_managers
+    - grp001
+    - grp002
   tags:
     - Faculty

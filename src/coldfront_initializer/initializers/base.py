@@ -138,9 +138,10 @@ class InitializationError(Exception):
 
 
 INITIALIZER_ORDER = (
+    "object_permissions",
+    "roles",
     "users",
     "groups",
-    "object_permissions",
     "custom_field_choicesets",
     "custom_fields",
     "tags",
