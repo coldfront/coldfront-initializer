@@ -14,7 +14,8 @@ REQUIRED_FK = {
 }
 
 OPTIONAL_M2M = {
-    "qos_list": (SlurmQOS, "name"),
+    "qos_add": (SlurmQOS, "name"),
+    "qos_remove": (SlurmQOS, "name"),
 }
 
 

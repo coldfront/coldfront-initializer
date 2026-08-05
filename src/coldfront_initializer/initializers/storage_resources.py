@@ -29,7 +29,9 @@ class StorageResourceInitializer(BaseInitializer):
             # StorageResource has no slug field — discard if present
             params.pop("slug", None)
 
-            matching_params, defaults = self.split_params(params, unique_params=["name"])
+            matching_params, defaults = self.split_params(
+                params, unique_params=["name"]
+            )
             resource, created = StorageResource.objects.get_or_create(
                 **matching_params, defaults=defaults
             )

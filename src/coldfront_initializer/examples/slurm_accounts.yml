@@ -2,7 +2,7 @@
   cluster: snowflake
   description: Slurm account for p1000001
   fairshare: 100
-  qos_list:
+  qos_add:
     - scavenger
   tags:
     - Faculty
@@ -11,5 +11,5 @@
   cluster: snowflake
   description: Slurm account for p1000002
   fairshare: 100
-  qos_list:
+  qos_add:
     - debug

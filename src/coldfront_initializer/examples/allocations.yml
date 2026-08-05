@@ -2,7 +2,7 @@
   project: Angular momentum in QGP holography
   owner: cgray
   resource_object: "ras.resource:Commercial Software X"
-  status: new
+  status: requested
   justification: Need software for my research
   tenant: Computer Science
   attribute_data:
@@ -16,7 +16,7 @@
   owner: sfoster
   resource_object: "ras.resource:Commercial Software X"
   justification: Need required software
-  status: new
+  status: requested
   tenant: Physics
   tags:
     - Payment Sent

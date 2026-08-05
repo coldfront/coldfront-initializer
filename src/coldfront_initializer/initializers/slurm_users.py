@@ -42,6 +42,7 @@ class SlurmUserInitializer(BaseInitializer):
                 query = {field: params.pop(assoc)}
                 if isinstance(model, str):
                     from django.apps import apps
+
                     model_cls = apps.get_model(model)
                 else:
                     model_cls = model

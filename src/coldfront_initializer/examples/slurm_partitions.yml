@@ -13,7 +13,8 @@
   max_tres_mins_per_job:
     cpu: 360
   fairshare: 1
-  qos_list:
+  qos: gpu
+  allow_qos:
     - gpu
   allow_accounts:
     - slurm-p1000001
@@ -29,11 +30,12 @@
   max_submit_jobs: 20
   fairshare: 1
   nodes: cpn-[10-20]
-  qos_list:
+  allow_qos:
     - normal
     - debug
     - general-compute
     - scavenger
+  qos: general-compute
   allow_groups:
     - principal_investigators
     - project_managers

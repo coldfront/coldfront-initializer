@@ -45,9 +45,7 @@ class SlurmClusterInitializer(BaseInitializer):
 
             # Set M2M values after creation
             if qos_list is not None:
-                cluster.qos_list.set(
-                    SlurmQOS.objects.filter(name__in=qos_list)
-                )
+                cluster.qos_list.set(SlurmQOS.objects.filter(name__in=qos_list))
                 cluster.save()
 
             self.set_custom_fields_values(cluster, custom_field_data)

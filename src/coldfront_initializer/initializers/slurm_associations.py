@@ -3,7 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from coldfront.ras.models import Allocation
-from coldfront.slurm.models import SlurmAccount, SlurmAssociation, SlurmCluster, SlurmQOS
+from coldfront.slurm.models import (
+    SlurmAccount,
+    SlurmAssociation,
+    SlurmCluster,
+    SlurmQOS,
+)
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,

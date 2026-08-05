@@ -13,8 +13,12 @@ REQUIRED_FK = {
     "cluster": (SlurmCluster, "name"),
 }
 
+OPTIONAL_FK = {
+    "qos": (SlurmQOS, "name"),
+}
+
 OPTIONAL_M2M = {
-    "qos_list": (SlurmQOS, "name"),
+    "allow_qos": (SlurmQOS, "name"),
     "allow_groups": ("users.Group", "name"),
     "allow_accounts": (SlurmAccount, "name"),
 }
@@ -34,6 +38,13 @@ class SlurmPartitionInitializer(BaseInitializer):
                 model, field = details
                 query = {field: params.pop(assoc)}
                 params[assoc] = model.objects.get(**query)
+
+            for assoc, details in OPTIONAL_FK.items():
+                if assoc in params:
+                    model, field = details
+                    query = {field: params.pop(assoc)}
+
+                    params[assoc] = model.objects.get(**query)
 
             # Collect M2M references before they are popped by split_params
             m2m_values = {}

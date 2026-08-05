@@ -43,6 +43,4 @@ class StorageSnapshotPolicyInitializer(BaseInitializer):
             self.set_tags(policy, tags)
 
 
-register_initializer(
-    "storage_snapshot_policies", StorageSnapshotPolicyInitializer
-)
+register_initializer("storage_snapshot_policies", StorageSnapshotPolicyInitializer)

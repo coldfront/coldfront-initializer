@@ -3,7 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from coldfront.ras.models import Allocation
-from coldfront.storage.models import StorageCluster, StorageQuota, StorageResource, StorageSnapshotPolicy
+from coldfront.storage.models import (
+    StorageCluster,
+    StorageQuota,
+    StorageResource,
+    StorageSnapshotPolicy,
+)
 from coldfront.users.models import Group, User
 
 from coldfront_initializer.initializers.base import (
