@@ -1,6 +1,6 @@
 [project]
 name = "coldfront-initializer"
-version = "0.0.5"
+version = "0.0.6"
 description = "Load data into ColdFront from yaml files"
 readme = "README.md"
 authors = [
@@ -17,7 +17,6 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "coldfront",
     "jinja2>=3.1.6",
     "ruamel-yaml>=0.19.1",
 ]
@@ -25,9 +24,6 @@ dependencies = [
 [build-system]
 requires = ["uv_build>=0.11.2,<0.12"]
 build-backend = "uv_build"
-
-[tool.uv.sources]
-coldfront = { git = "https://github.com/coldfront/coldfront", branch = "dev/2.0.x" }
 
 [dependency-groups]
 dev = [
