@@ -1,12 +1,19 @@
 # ObjectPermission records define reusable actions + constraints.
 # User/group assignments happen in users.yml and groups.yml instead.
 #
+# Naming convention: {access}/{scope}/{model}[/{constraint_detail}]
+#   access  - read (view), write (view+add+change+delete), read:{qualifier},
+#             write:{qualifier}
+#   scope   - all (unrestricted), self (owner=$user), team (owner or member),
+#             tenant:{name}
+#   model   - Django model name (e.g., project, allocation, projectuser)
+#
 # Constraint tokens:
 #   $user - replaced with the current user's primary key at runtime
 
 # --- Permissions for principal_investigator role ---
 
-projects.rw_owner:
+write/self/project:
   actions:
     - view
     - add
@@ -20,7 +27,7 @@ projects.rw_owner:
   constraints:
     owner: $user
 
-allocations.ro_owner:
+read/self/allocation:
   actions:
     - view
   description: "View allocations on your own projects"
@@ -31,43 +38,24 @@ allocations.ro_owner:
   constraints:
     project__owner: $user
 
-allocations.request:
-  actions:
-    - request
-  description: "Request allocations for your own projects"
-  enabled: true
-  object_types:
-    ras:
-      - allocation
-  constraints:
-    project__owner: $user
-
-allocations.renew_owner:
-  actions:
-    - renew
-  description: "Renew allocations on your own projects"
-  enabled: true
-  object_types:
-    ras:
-      - allocation
-  constraints:
-    project__owner: $user
-
-change_requests.ro_owner:
+write:request:renew/self/allocation:
   actions:
     - view
-  description: "View change requests on allocations on your own projects"
+    - request
+    - renew
+  description: "Request and renew allocations for your own projects"
   enabled: true
   object_types:
     ras:
-      - allocationchangerequest
+      - allocation
   constraints:
-    allocation__project__owner: $user
+    project__owner: $user
 
-change_requests.add_owner:
+write:add/self/allocationchangerequest:
   actions:
+    - view
     - add
-  description: "Request changes to allocations on your own projects"
+  description: "View and add change requests for allocations on your own projects"
   enabled: true
   object_types:
     ras:
@@ -75,7 +63,7 @@ change_requests.add_owner:
   constraints:
     allocation__project__owner: $user
 
-project_users.rw_owner:
+write/team/projectuser:
   actions:
     - view
     - add
@@ -90,7 +78,7 @@ project_users.rw_owner:
     - project__owner: $user
     - project__users__user: $user
 
-users.ro:
+read/all/user:
   actions:
     - view
   description: "View all users"
@@ -99,7 +87,7 @@ users.ro:
     users:
       - user
 
-project_users.ro:
+read/all/projectuser:
   actions:
     - view
   description: "View all project users"
@@ -110,7 +98,7 @@ project_users.ro:
 
 # --- Permissions for center_director role ---
 
-allocations.approve_deny:
+write:review/all/allocation:
   actions:
     - view
     - approve
@@ -121,7 +109,7 @@ allocations.approve_deny:
     ras:
       - allocation
 
-projects.ro:
+read/all/project:
   actions:
     - view
   description: "View all projects"
@@ -130,7 +118,7 @@ projects.ro:
     ras:
       - project
 
-comments.ro:
+read/all/commententry:
   actions:
     - view
   description: "View comments on allocations"
@@ -139,10 +127,11 @@ comments.ro:
     core:
       - commententry
 
-comments.ro_owner:
+write:add/self/commententry/allocation:
   actions:
     - view
-  description: "View comments on your own allocations"
+    - add
+  description: "View and add comments on your own allocations"
   enabled: true
   object_types:
     core:
@@ -155,8 +144,9 @@ comments.ro_owner:
         filter:
           project__owner: $user
 
-comments.add:
+write:add/all/commententry:
   actions:
+    - view
     - add
   description: "Add comments to allocations"
   enabled: true
@@ -164,24 +154,9 @@ comments.add:
     core:
       - commententry
 
-comments.add_owner:
+write:edit/self/commententry:
   actions:
-    - add
-  description: "Add comments to your own allocations"
-  enabled: true
-  object_types:
-    core:
-      - commententry
-  constraints:
-    assigned_object_type__model: "allocation"
-    assigned_object_id__in:
-      $queryset:
-        model: ras.allocation
-        filter:
-          project__owner: $user
-
-comments.own_edit_delete:
-  actions:
+    - view
     - change
     - delete
   description: "Edit and delete your own comments"
@@ -194,7 +169,7 @@ comments.own_edit_delete:
 
 # --- Permissions for physics_reviewer role ---
 
-physics.projects.ro:
+read/tenant:physics/project:
   actions:
     - view
   description: "View projects in the Physics tenant"
@@ -205,7 +180,7 @@ physics.projects.ro:
   constraints:
     tenant__name: "Physics"
 
-physics.allocations.approve_deny:
+write:review/tenant:physics/allocation:
   actions:
     - view
     - approve
