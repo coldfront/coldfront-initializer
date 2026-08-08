@@ -50,15 +50,11 @@ $ uv run coldfront load_initializer_data --path /path/to/yaml/files
 
 ## Community supported library of initial data
 
-The ColdFront community maintians a library of common initial data available for importing into your ColdFront instance.  To load run:
+The ColdFront community maintains a library of common initial data available for importing into your ColdFront instance.  To load run:
 
 ```
-$ uv run coldfront load_initializer_data --library resource_types
+$ uv run coldfront load_initializer_data --library custom_fields
 ```
-
-### Resource Types
-
-- Slurm Cluster, Slurm Partition
 
 ## Credits
 

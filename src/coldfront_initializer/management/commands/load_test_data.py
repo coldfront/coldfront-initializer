@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
 
@@ -23,6 +23,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        verbosity = options.get("verbosity", 1)
+
         if not options["force"]:
             self.stdout.write(
                 self.style.WARNING(
@@ -38,4 +40,6 @@ class Command(BaseCommand):
         intializer_base_path = os.path.dirname(coldfront_initializer.__file__)
         intializer_path = f"{intializer_base_path}/examples"
 
-        call_command("load_initializer_data", "--path", intializer_path)
+        call_command(
+            "load_initializer_data", "--path", intializer_path, verbosity=verbosity
+        )

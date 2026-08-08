@@ -1,6 +1,8 @@
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
+
+import logging
 
 from coldfront.ras.models import Allocation
 from coldfront.slurm.models import (
@@ -15,36 +17,36 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
-
-MATCH_PARAMS = ["allocation"]
-
-OPTIONAL_FK = {
-    "default_qos": (SlurmQOS, "name"),
-}
+logger = logging.getLogger(__name__)
 
 
 class SlurmAssociationInitializer(BaseInitializer):
+    MODEL = SlurmAssociation
+    OPTIONAL_ASSOCS = {
+        "default_qos": (SlurmQOS, "name"),
+    }
+    MATCH_PARAMS = ["allocation"]
+
     def load_data(self, records):
         if records is None:
             return
 
         for params in records:
-            # Look up allocation by slug
+            # Look up allocation by slug (required, skip on failure)
             allocation_slug = params.pop("allocation", None)
             if allocation_slug is None:
-                print("⚠️  SlurmAssociation requires 'allocation' field")
+                logger.warning("SlurmAssociation requires 'allocation' field")
                 continue
-
             try:
                 params["allocation"] = Allocation.objects.get(slug=allocation_slug)
             except Allocation.DoesNotExist:
-                print(
-                    f"⚠️  Allocation with slug '{allocation_slug}' not found, "
-                    "skipping SlurmAssociation"
+                logger.warning(
+                    "Allocation with slug '%s' not found, skipping SlurmAssociation",
+                    allocation_slug,
                 )
                 continue
 
-            # Resolve slurm_account and parent (may be cluster:account format)
+            # Resolve slurm_account and parent (cluster:account format)
             for assoc in ("slurm_account", "parent"):
                 if assoc in params:
                     val = params[assoc]
@@ -59,55 +61,38 @@ class SlurmAssociationInitializer(BaseInitializer):
                                 name=acct_name, cluster=cluster
                             )
                         except (SlurmCluster.DoesNotExist, SlurmAccount.DoesNotExist):
-                            print(
-                                f"⚠️  SlurmAccount '{acct_name}' on cluster "
-                                f"'{cluster_name}' not found, "
-                                f"setting {assoc}=None"
+                            logger.warning(
+                                "SlurmAccount '%s' on cluster '%s' not found,"
+                                " setting %s=None",
+                                acct_name,
+                                cluster_name,
+                                assoc,
                             )
                             params[assoc] = None
                     else:
-                        # Legacy: lookup by name only
                         try:
                             params[assoc] = SlurmAccount.objects.get(name=val)
                         except SlurmAccount.DoesNotExist:
-                            print(
-                                f"⚠️  SlurmAccount with name='{val}' not found, "
-                                f"setting {assoc}=None"
+                            logger.warning(
+                                "SlurmAccount with name='%s' not found,"
+                                " setting %s=None",
+                                val,
+                                assoc,
                             )
                             params[assoc] = None
 
             # Resolve remaining optional FK references (default_qos)
-            for assoc, details in OPTIONAL_FK.items():
-                if assoc in params:
-                    val = params[assoc]
-                    if val is None or val == "null":
-                        params[assoc] = None
-                        continue
-                    model, field = details
-                    query = {field: val}
-                    try:
-                        params[assoc] = model.objects.get(**query)
-                    except model.DoesNotExist:
-                        print(
-                            f"⚠️  {model.__name__} with {field}='{val}' not found, "
-                            f"setting {assoc}=None"
-                        )
-                        params[assoc] = None
+            self.resolve_optional(params)
 
-            matching_params, defaults = self.split_params(params, MATCH_PARAMS)
-
-            # Use update_or_create because a post_save signal on Allocation
-            # may have already created a bare SlurmAssociation (with all-None
-            # default values). get_or_create would return that existing record
-            # without applying our defaults.
-            assoc_obj, created = SlurmAssociation.objects.update_or_create(
+            matching_params, defaults = self.split_params(params, self.MATCH_PARAMS)
+            obj, created = self.MODEL.objects.get_or_create(
                 **matching_params, defaults=defaults
             )
 
             if created:
-                print(
-                    "🖥️  Created SlurmAssociation for allocation",
-                    assoc_obj.allocation.slug,
+                logger.debug(
+                    "Created SlurmAssociation for allocation %s",
+                    obj.allocation.slug,
                 )
 
 

@@ -1,7 +1,8 @@
-# SPDX-FileCopyrightText: (C) Tobias Genannt
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
+
+import logging
 
 from coldfront.users.models import Group, ObjectPermission, Role, User
 
@@ -10,50 +11,61 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class GroupInitializer(BaseInitializer):
-    def load_data(self, records):
-        if records is None:
-            return
+    MODEL = Group
+    RECORDS_ARE_DICT = True
 
-        for groupname, group_details in records.items():
-            roles = group_details.pop("roles", [])
-            permissions = group_details.pop("object_permissions", [])
-            group, created = Group.objects.get_or_create(name=groupname)
-            if created:
-                print("👥 Created group", groupname)
+    def _pre_process(self, params):
+        # Pop M2M fields before split_params
+        self._usernames = params.pop("users", [])
+        self._role_names = params.pop("roles", [])
+        self._perm_names = params.pop("object_permissions", [])
 
-            for username in group_details.get("users", []):
+    def _post_process(self, obj, created, params):
+        for username in self._usernames:
+            try:
                 user = User.objects.get(username=username)
-                if user:
-                    group.users.add(user)
-                    print(f" 👤 Assigned user {username} to group {group.name}")
+                obj.users.add(user)
+                logger.debug("Assigned user %s to group %s", username, obj.name)
+            except User.DoesNotExist:
+                logger.warning(
+                    "User '%s' not found, skipping for group %s",
+                    username,
+                    obj.name,
+                )
 
-            if roles:
-                for role_name in roles:
-                    try:
-                        role = Role.objects.get(name=role_name)
-                        group.roles.add(role)
-                        print(f" 👥 Assigned role {role_name} to group {groupname}")
-                    except Role.DoesNotExist:
-                        print(
-                            f" ⚠️ Role '{role_name}' not found, skipping for group {groupname}"
-                        )
+        for role_name in self._role_names:
+            try:
+                role = Role.objects.get(name=role_name)
+                obj.roles.add(role)
+                logger.debug("Assigned role %s to group %s", role_name, obj.name)
+            except Role.DoesNotExist:
+                logger.warning(
+                    "Role '%s' not found, skipping for group %s",
+                    role_name,
+                    obj.name,
+                )
 
-            if permissions:
-                for perm_name in permissions:
-                    try:
-                        perm = ObjectPermission.objects.get(name=perm_name)
-                        group.object_permissions.add(perm)
-                        print(
-                            f" 👥 Assigned object permission {perm_name} to group {groupname}"
-                        )
-                    except ObjectPermission.DoesNotExist:
-                        print(
-                            f" ⚠️ ObjectPermission '{perm_name}' not found, skipping for group {groupname}"
-                        )
+        for perm_name in self._perm_names:
+            try:
+                perm = ObjectPermission.objects.get(name=perm_name)
+                obj.object_permissions.add(perm)
+                logger.debug(
+                    "Assigned object permission %s to group %s",
+                    perm_name,
+                    obj.name,
+                )
+            except ObjectPermission.DoesNotExist:
+                logger.warning(
+                    "ObjectPermission '%s' not found, skipping for group %s",
+                    perm_name,
+                    obj.name,
+                )
 
-            group.save()
+        obj.save()
 
 
 register_initializer("groups", GroupInitializer)

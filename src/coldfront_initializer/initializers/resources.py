@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
 
@@ -11,44 +11,18 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
-OPTIONAL_ASSOCS = {
-    "resource_type": (ResourceType, "name"),
-    "tenant": (Tenant, "name"),
-    "parent": (Resource, "name"),
-}
-
 
 class ResourceInitializer(BaseInitializer):
-    def load_data(self, records):
-        if records is None:
-            return
+    MODEL = Resource
+    OPTIONAL_ASSOCS = {
+        "resource_type": (ResourceType, "name"),
+        "tenant": (Tenant, "name"),
+        "parent": (Resource, "name"),
+    }
 
-        for params in records:
-            custom_field_data = self.pop_custom_fields(params)
-            tags = params.pop("tags", None)
-            create_date = params.pop("created", None)
-
-            if "schema" in params:
-                validate_schema(params["schema"])
-
-            for assoc, details in OPTIONAL_ASSOCS.items():
-                if assoc in params:
-                    model, field = details
-                    query = {field: params.pop(assoc)}
-
-                    params[assoc] = model.objects.get(**query)
-
-            matching_params, defaults = self.split_params(params)
-            resource, created = Resource.objects.get_or_create(
-                **matching_params, defaults=defaults
-            )
-
-            if created:
-                self.set_create_date(resource, create_date)
-                print("🖥️  Created resource", resource.name)
-
-            self.set_custom_fields_values(resource, custom_field_data)
-            self.set_tags(resource, tags)
+    def _pre_process(self, params):
+        if "schema" in params:
+            validate_schema(params["schema"])
 
 
 register_initializer("resources", ResourceInitializer)

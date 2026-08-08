@@ -1,5 +1,4 @@
-# SPDX-FileCopyrightText: (C) Tobias Genannt
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
 
@@ -13,18 +12,18 @@ from .object_permissions import ObjectPermissionInitializer
 from .projects import ProjectInitializer
 from .resource_types import ResourceTypeInitializer
 from .resources import ResourceInitializer
-from .tags import TagInitializer
-from .tenant_groups import TenantGroupInitializer
-from .tenants import TenantInitializer
+from .roles import RoleInitializer
 from .slurm_accounts import SlurmAccountInitializer
 from .slurm_associations import SlurmAssociationInitializer
 from .slurm_clusters import SlurmClusterInitializer
 from .slurm_partitions import SlurmPartitionInitializer
 from .slurm_qos import SlurmQOSInitializer
 from .slurm_users import SlurmUserInitializer
-from .roles import RoleInitializer
-from .users import UserInitializer
 from .storage_clusters import StorageClusterInitializer
+from .storage_quotas import StorageQuotaInitializer
 from .storage_resources import StorageResourceInitializer
 from .storage_snapshot_policies import StorageSnapshotPolicyInitializer
-from .storage_quotas import StorageQuotaInitializer
+from .tags import TagInitializer
+from .tenant_groups import TenantGroupInitializer
+from .tenants import TenantInitializer
+from .users import UserInitializer

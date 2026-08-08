@@ -1,5 +1,4 @@
-# SPDX-FileCopyrightText: (C) Tobias Genannt
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
 
@@ -10,33 +9,10 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
-OPTIONAL_ASSOCS = {"parent": (TenantGroup, "name")}
-
 
 class TenantGroupInitializer(BaseInitializer):
-    def load_data(self, records):
-        if records is None:
-            return
-
-        for params in records:
-            tags = params.pop("tags", None)
-
-            for assoc, details in OPTIONAL_ASSOCS.items():
-                if assoc in params:
-                    model, field = details
-                    query = {field: params.pop(assoc)}
-
-                    params[assoc] = model.objects.get(**query)
-
-            matching_params, defaults = self.split_params(params)
-            tenant_group, created = TenantGroup.objects.get_or_create(
-                **matching_params, defaults=defaults
-            )
-
-            if created:
-                print("🔳 Created Tenant Group", tenant_group.name)
-
-            self.set_tags(tenant_group, tags)
+    MODEL = TenantGroup
+    OPTIONAL_ASSOCS = {"parent": (TenantGroup, "name")}
 
 
 register_initializer("tenant_groups", TenantGroupInitializer)

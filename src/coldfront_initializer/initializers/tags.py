@@ -1,7 +1,8 @@
-# SPDX-FileCopyrightText: (C) Tobias Genannt
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
+
+import logging
 
 from coldfront.core.choices import ColorChoices
 from coldfront.core.models import ObjectType, Tag
@@ -11,39 +12,35 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class TagInitializer(BaseInitializer):
-    def load_data(self, records):
-        if records is None:
+    MODEL = Tag
+
+    def _pre_process(self, params):
+        if "color" in params:
+            color = params.pop("color")
+            for color_tpl in ColorChoices:
+                if color in color_tpl:
+                    params["color"] = color_tpl[0]
+
+        # Pop M2M field before split_params
+        self._object_types = params.pop("object_types", None)
+
+    def _post_process(self, obj, created, params):
+        if not created:
             return
-
-        for params in records:
-            if "color" in params:
-                color = params.pop("color")
-
-                for color_tpl in ColorChoices:
-                    if color in color_tpl:
-                        params["color"] = color_tpl[0]
-
-            object_types = params.pop("object_types", None)
-            matching_params, defaults = self.split_params(params)
-            tag, created = Tag.objects.get_or_create(
-                **matching_params, defaults=defaults
+        object_types = self._object_types
+        if not object_types:
+            return
+        for ot in object_types:
+            ct = ObjectType.objects.get(
+                app_label=ot["app"],
+                model=ot["model"],
             )
-
-            if created:
-                print("🎨 Created Tag", tag.name)
-
-                if object_types:
-                    for ot in object_types:
-                        ct = ObjectType.objects.get(
-                            app_label=ot["app"],
-                            model=ot["model"],
-                        )
-                        tag.object_types.add(ct)
-                        print(
-                            f"🎨 Restricted Tag {tag.name} to {ot['app']}.{ot['model']}"
-                        )
+            obj.object_types.add(ct)
+            logger.debug("Restricted Tag %s to %s.%s", obj.name, ot["app"], ot["model"])
 
 
 register_initializer("tags", TagInitializer)

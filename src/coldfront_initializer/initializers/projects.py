@@ -1,6 +1,8 @@
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
+
+import logging
 
 from coldfront.ras.models import Project, ProjectUser
 from coldfront.tenancy.models import Tenant
@@ -11,60 +13,38 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
-REQUIRED_ASSOCS = {
-    "owner": (User, "username"),
-}
-OPTIONAL_ASSOCS = {
-    "tenant": (Tenant, "name"),
-    "group": (Group, "name"),
-}
+logger = logging.getLogger(__name__)
 
 
 class ProjectInitializer(BaseInitializer):
-    def load_data(self, records):
-        if records is None:
-            return
+    MODEL = Project
+    REQUIRED_ASSOCS = {
+        "owner": (User, "username"),
+    }
+    OPTIONAL_ASSOCS = {
+        "tenant": (Tenant, "name"),
+        "group": (Group, "name"),
+    }
 
-        for params in records:
-            custom_field_data = self.pop_custom_fields(params)
-            tags = params.pop("tags", None)
-            create_date = params.pop("created", None)
-            users = params.pop("users", [])
+    def _pre_process(self, params):
+        # Pop users before split_params so it doesn't end up in defaults
+        self._usernames = params.pop("users", [])
 
-            for assoc, details in REQUIRED_ASSOCS.items():
-                model, field = details
-                query = {field: params.pop(assoc)}
-
-                params[assoc] = model.objects.get(**query)
-
-            for assoc, details in OPTIONAL_ASSOCS.items():
-                if assoc in params:
-                    model, field = details
-                    query = {field: params.pop(assoc)}
-
-                    params[assoc] = model.objects.get(**query)
-
-            matching_params, defaults = self.split_params(params)
-            project, created = Project.objects.get_or_create(
-                **matching_params, defaults=defaults
-            )
-
-            if created:
-                self.set_create_date(project, create_date)
-
-                print("🖥️  Created project", project.name)
-
-            for u in users:
-                user = User.objects.get(username=u)
-                if user:
-                    _, created = ProjectUser.objects.get_or_create(
-                        user=user, project=project
-                    )
-                    if created:
-                        print("👤  Created project user: ", u)
-
-            self.set_custom_fields_values(project, custom_field_data)
-            self.set_tags(project, tags)
+    def _post_process(self, obj, created, params):
+        for username in self._usernames:
+            try:
+                user = User.objects.get(username=username)
+                _, created_pu = ProjectUser.objects.get_or_create(
+                    user=user, project=obj
+                )
+                if created_pu:
+                    logger.debug("Created project user: %s", username)
+            except User.DoesNotExist:
+                logger.warning(
+                    "User '%s' not found, skipping for project %s",
+                    username,
+                    obj.name,
+                )
 
 
 register_initializer("projects", ProjectInitializer)

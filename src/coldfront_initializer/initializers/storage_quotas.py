@@ -1,6 +1,8 @@
-# SPDX-FileCopyrightText: (C) ColdFront Authors
+# SPDX-FileCopyrightText: (C) University at Buffalo
 #
 # SPDX-License-Identifier: Apache-2.0
+
+import logging
 
 from coldfront.ras.models import Allocation
 from coldfront.storage.models import (
@@ -16,96 +18,68 @@ from coldfront_initializer.initializers.base import (
     register_initializer,
 )
 
-MATCH_PARAMS = ["allocation"]
-
-REQUIRED_ASSOCS = {
-    "storage": (StorageResource, "name"),
-    "owning_user": (User, "username"),
-    "owning_group": (Group, "name"),
-}
-
-OPTIONAL_M2M = {
-    "clusters": StorageCluster,
-}
-
-OPTIONAL_FK = {
-    "snapshot_policy": (StorageSnapshotPolicy, "name"),
-}
+logger = logging.getLogger(__name__)
 
 
 class StorageQuotaInitializer(BaseInitializer):
+    MODEL = StorageQuota
+    REQUIRED_ASSOCS = {
+        "storage": (StorageResource, "name"),
+        "owning_user": (User, "username"),
+        "owning_group": (Group, "name"),
+    }
+    OPTIONAL_ASSOCS = {
+        "snapshot_policy": (StorageSnapshotPolicy, "name"),
+    }
+    OPTIONAL_M2M_ASSOCS = {
+        "clusters": (StorageCluster, "name"),
+    }
+    MATCH_PARAMS = ["allocation"]
+
+    def _pre_process(self, params):
+        allocation_slug = params.pop("allocation", None)
+        if allocation_slug is None:
+            logger.warning("StorageQuota requires 'allocation' field")
+            params["_skip"] = True
+            return
+        try:
+            params["allocation"] = Allocation.objects.get(slug=allocation_slug)
+        except Allocation.DoesNotExist:
+            logger.warning(
+                "Allocation with slug '%s' not found, skipping StorageQuota",
+                allocation_slug,
+            )
+            params["_skip"] = True
+
     def load_data(self, records):
         if records is None:
             return
 
         for params in records:
-            custom_field_data = self.pop_custom_fields(params)
-            tags = params.pop("tags", None)
-
-            # Resolve allocation by slug
-            allocation_slug = params.pop("allocation", None)
-            if allocation_slug is None:
-                print("⚠️  StorageQuota requires 'allocation' field")
+            self._pre_process(params)
+            if params.pop("_skip", False):
                 continue
 
-            try:
-                params["allocation"] = Allocation.objects.get(slug=allocation_slug)
-            except Allocation.DoesNotExist:
-                print(
-                    f"⚠️  Allocation with slug '{allocation_slug}' not found, "
-                    "skipping StorageQuota"
-                )
-                continue
+            custom_field_data = self._pop_custom_fields(params)
+            tags = self._pop_tags(params)
 
-            # Resolve required FK references
-            for assoc, details in REQUIRED_ASSOCS.items():
-                if assoc in params:
-                    model, field = details
-                    query = {field: params.pop(assoc)}
+            self.resolve_required(params)
+            self.resolve_optional(params)
+            m2m_values = self.collect_m2m_values(params)
 
-                    params[assoc] = model.objects.get(**query)
-
-            # Resolve optional FK references
-            for assoc, details in OPTIONAL_FK.items():
-                if assoc in params:
-                    val = params[assoc]
-                    if val is None or val == "null":
-                        params[assoc] = None
-                        continue
-                    model, field = details
-                    query = {field: val}
-                    try:
-                        params[assoc] = model.objects.get(**query)
-                    except model.DoesNotExist:
-                        print(
-                            f"⚠️  {model.__name__} not found for {assoc}='{val}', "
-                            f"setting {assoc}=None"
-                        )
-                        params[assoc] = None
-
-            # Resolve M2M references (optional)
-            cluster_names = params.pop("clusters", None)
-
-            matching_params, defaults = self.split_params(params, MATCH_PARAMS)
-            quota, created = StorageQuota.objects.get_or_create(
+            matching_params, defaults = self.split_params(params, self.MATCH_PARAMS)
+            obj, created = self._model.objects.get_or_create(
                 **matching_params, defaults=defaults
             )
 
             if created:
-                print(
-                    "🖥️  Created StorageQuota for allocation",
-                    quota.allocation.slug,
+                logger.debug(
+                    "Created StorageQuota for allocation %s", obj.allocation.slug
                 )
 
-            # Set M2M values after creation
-            if cluster_names is not None:
-                quota.clusters.set(
-                    StorageCluster.objects.filter(name__in=cluster_names)
-                )
-                quota.save()
-
-            self.set_custom_fields_values(quota, custom_field_data)
-            self.set_tags(quota, tags)
+            self.set_m2m_values(obj, m2m_values)
+            self.set_custom_fields_values(obj, custom_field_data)
+            self.set_tags(obj, tags)
 
 
 register_initializer("storage_quotas", StorageQuotaInitializer)
