@@ -1,0 +1,163 @@
+# Default ColdFront permissions
+#
+# Naming convention: {access}/{scope}/{model}[/{constraint_detail}]
+#   access  - read (view), write (view+add+change+delete), read:{qualifier},
+#             write:{qualifier}
+#   scope   - all (unrestricted), self (owner=$user), team (owner or member),
+#             tenant:{name}
+#   model   - Django model name (e.g., project, allocation, projectuser)
+#
+# Constraint tokens:
+#   $user - replaced with the current user's primary key at runtime
+
+write/self/project:
+  actions:
+    - view
+    - add
+    - change
+    - delete
+  description: "Manage your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - project
+  constraints:
+    owner: $user
+
+read/self/allocation:
+  actions:
+    - view
+  description: "View allocations on your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - allocation
+  constraints:
+    project__owner: $user
+
+write:request:renew/self/allocation:
+  actions:
+    - view
+    - request
+    - renew
+  description: "Request and renew allocations for your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - allocation
+  constraints:
+    project__owner: $user
+
+write:add/self/allocationchangerequest:
+  actions:
+    - view
+    - add
+  description: "View and add change requests for allocations on your own projects"
+  enabled: true
+  object_types:
+    ras:
+      - allocationchangerequest
+  constraints:
+    allocation__project__owner: $user
+
+write/team/projectuser:
+  actions:
+    - view
+    - add
+    - change
+    - delete
+  description: "Manage project users for projects you own or belong to"
+  enabled: true
+  object_types:
+    ras:
+      - projectuser
+  constraints:
+    - project__owner: $user
+    - project__users__user: $user
+
+read/all/user:
+  actions:
+    - view
+  description: "View all users"
+  enabled: true
+  object_types:
+    users:
+      - user
+
+read/all/projectuser:
+  actions:
+    - view
+  description: "View all project users"
+  enabled: true
+  object_types:
+    ras:
+      - projectuser
+
+write:review/all/allocation:
+  actions:
+    - view
+    - approve
+    - deny
+  description: "View, approve, and deny all allocations"
+  enabled: true
+  object_types:
+    ras:
+      - allocation
+
+read/all/project:
+  actions:
+    - view
+  description: "View all projects"
+  enabled: true
+  object_types:
+    ras:
+      - project
+
+read/all/commententry:
+  actions:
+    - view
+  description: "View comments on allocations"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+
+write:add/self/commententry/allocation:
+  actions:
+    - view
+    - add
+  description: "View and add comments on your own allocations"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+  constraints:
+    assigned_object_type__model: "allocation"
+    assigned_object_id__in:
+      $queryset:
+        model: ras.allocation
+        filter:
+          project__owner: $user
+
+write:add/all/commententry:
+  actions:
+    - view
+    - add
+  description: "Add comments to allocations"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+
+write:edit/self/commententry:
+  actions:
+    - view
+    - change
+    - delete
+  description: "Edit and delete your own comments"
+  enabled: true
+  object_types:
+    core:
+      - commententry
+  constraints:
+    created_by: $user

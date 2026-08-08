@@ -1,0 +1,31 @@
+# Default ColdFront roles
+#
+# Roles bundle ObjectPermissions into reusable permission profiles.
+# User/group role assignments happen in users.yml and groups.yml.
+#
+# Permission naming convention: {access}/{scope}/{model}[/{constraint_detail}]
+
+principal_investigator:
+  description: "Principal Investigator - can manage their own projects and allocations"
+  weight: 10
+  object_permissions:
+    - write/self/project
+    - read/self/allocation
+    - write:request:renew/self/allocation
+    - write:add/self/allocationchangerequest
+    - write/team/projectuser
+    - read/all/user
+    - write:add/self/commententry/allocation
+    - write:edit/self/commententry
+
+center_director:
+  description: "Center Director - can approve/deny all allocations and view all projects"
+  weight: 20
+  object_permissions:
+    - write:review/all/allocation
+    - read/all/project
+    - read/all/projectuser
+    - read/all/commententry
+    - write:add/all/commententry
+    - write:edit/self/commententry
+    - read/all/user
