@@ -8,6 +8,7 @@ from coldfront.core.models import CustomField, CustomFieldChoiceSet
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
+    LoadResult,
     register_initializer,
 )
 
@@ -44,142 +45,151 @@ class CustomFieldInitializer(BaseInitializer):
 
     def load_data(self, records):
         if records is None:
-            return
+            return None
 
         items = self._normalize_records(records)
+        result = LoadResult(found=len(items))
+        self._result = result
 
         for params in items:
-            cf_type = params.get("type")
+            try:
+                cf_type = params.get("type")
 
-            # --- Type-specific validations (skip if invalid) ---
-            if params.get("validation_regex") and cf_type not in (
-                "text",
-                "longtext",
-                "url",
-            ):
-                logger.warning(
-                    "Unable to create Custom Field '%s': validation_regex is "
-                    "supported only for text, longtext and url types",
-                    params.get(self.PRIMARY_KEY),
-                )
-                continue
-
-            if params.get("validation_minimum") and cf_type not in ("integer",):
-                logger.warning(
-                    "Unable to create Custom Field '%s': validation_minimum is "
-                    "supported only for integer type",
-                    params.get(self.PRIMARY_KEY),
-                )
-                continue
-
-            if params.get("validation_maximum") and cf_type not in ("integer",):
-                logger.warning(
-                    "Unable to create Custom Field '%s': validation_maximum is "
-                    "supported only for integer type",
-                    params.get(self.PRIMARY_KEY),
-                )
-                continue
-
-            if params.get("choices") and cf_type not in ("select", "multiselect"):
-                logger.warning(
-                    "Unable to create Custom Field '%s': choices is supported only "
-                    "for select and multiselect types",
-                    params.get(self.PRIMARY_KEY),
-                )
-                continue
-
-            if params.get("related_object_type") and cf_type not in (
-                "object",
-                "multiobject",
-            ):
-                logger.warning(
-                    "Unable to create Custom Field '%s': related_object_type is "
-                    "supported only for object and multiobject types",
-                    params.get(self.PRIMARY_KEY),
-                )
-                continue
-
-            # --- Pop non-model fields before split_params ---
-            on_objects = params.pop("on_objects", None)
-            choices = params.pop("choices", None)
-            related_object_type = params.pop("related_object_type", None)
-            validation_regex = params.pop("validation_regex", None)
-            validation_minimum = params.pop("validation_minimum", None)
-            validation_maximum = params.pop("validation_maximum", None)
-            ui_visibility = params.pop("ui_visibility", None)
-
-            # CustomField has no custom_field_data or tags support
-            create_date = self._pop_created(params)
-
-            matching_params, defaults = self.split_params(
-                params, unique_params=["name"]
-            )
-            obj, created = self._model.objects.get_or_create(
-                **matching_params, defaults=defaults
-            )
-
-            if created:
-                logger.debug("Created custom field %s", obj.name)
-
-                # --- Apply field values ---
-                if params.get("default"):
-                    obj.default = params["default"]
-                if params.get("description"):
-                    obj.description = params["description"]
-                if params.get("label"):
-                    obj.label = params["label"]
-                if params.get("required"):
-                    obj.required = params["required"]
-                if params.get("type"):
-                    obj.type = params["type"]
-                if params.get("filter_logic"):
-                    obj.filter_logic = params["filter_logic"]
-                if params.get("weight", -1) >= 0:
-                    obj.weight = params["weight"]
-                if params.get("group_name"):
-                    obj.group_name = params["group_name"]
-                if params.get("ui_editable"):
-                    obj.ui_editable = params["ui_editable"]
-                if ui_visibility:
-                    obj.ui_visible = ui_visibility
-                if params.get("search_weight", -1) >= 0:
-                    obj.search_weight = params["search_weight"]
-                if params.get("is_cloneable", None) is not None:
-                    obj.is_cloneable = params["is_cloneable"]
-                if params.get("required_action", None) is not None:
-                    obj.required_action = params["required_action"]
-
-                # on_objects
-                if on_objects:
-                    for object_type in on_objects:
-                        obj.object_types.add(get_class_for_class_path(object_type))
-
-                # related_object_type
-                if related_object_type:
-                    obj.related_object_type = get_class_for_class_path(
-                        related_object_type
+                # --- Type-specific validations (skip if invalid) ---
+                if params.get("validation_regex") and cf_type not in (
+                    "text",
+                    "longtext",
+                    "url",
+                ):
+                    self._skip(
+                        "Unable to create Custom Field "
+                        f"'{params.get(self.PRIMARY_KEY)}': validation_regex is "
+                        "supported only for text, longtext and url types"
                     )
+                    continue
 
-                # validation fields
-                if validation_regex:
-                    obj.validation_regex = validation_regex
-                if validation_minimum:
-                    obj.validation_minimum = validation_minimum
-                if validation_maximum:
-                    obj.validation_maximum = validation_maximum
-
-                # choices
-                if choices:
-                    choice_set, _ = CustomFieldChoiceSet.objects.get_or_create(
-                        name=f"{obj.name}_choices",
-                        choices=choices,
+                if params.get("validation_minimum") and cf_type not in ("integer",):
+                    self._skip(
+                        "Unable to create Custom Field "
+                        f"'{params.get(self.PRIMARY_KEY)}': validation_minimum is "
+                        "supported only for integer type"
                     )
-                    obj.choice_set = choice_set
+                    continue
 
-                obj.save()
+                if params.get("validation_maximum") and cf_type not in ("integer",):
+                    self._skip(
+                        "Unable to create Custom Field "
+                        f"'{params.get(self.PRIMARY_KEY)}': validation_maximum is "
+                        "supported only for integer type"
+                    )
+                    continue
 
-                if create_date:
-                    self.set_create_date(obj, create_date)
+                if params.get("choices") and cf_type not in ("select", "multiselect"):
+                    self._skip(
+                        "Unable to create Custom Field "
+                        f"'{params.get(self.PRIMARY_KEY)}': choices is supported "
+                        "only for select and multiselect types"
+                    )
+                    continue
+
+                if params.get("related_object_type") and cf_type not in (
+                    "object",
+                    "multiobject",
+                ):
+                    self._skip(
+                        "Unable to create Custom Field "
+                        f"'{params.get(self.PRIMARY_KEY)}': related_object_type is "
+                        "supported only for object and multiobject types"
+                    )
+                    continue
+
+                # --- Pop non-model fields before split_params ---
+                on_objects = params.pop("on_objects", None)
+                choices = params.pop("choices", None)
+                related_object_type = params.pop("related_object_type", None)
+                validation_regex = params.pop("validation_regex", None)
+                validation_minimum = params.pop("validation_minimum", None)
+                validation_maximum = params.pop("validation_maximum", None)
+                ui_visibility = params.pop("ui_visibility", None)
+
+                # CustomField has no custom_field_data or tags support
+                create_date = self._pop_created(params)
+
+                matching_params, defaults = self.split_params(
+                    params, unique_params=["name"]
+                )
+                obj, created = self._model.objects.get_or_create(
+                    **matching_params, defaults=defaults
+                )
+
+                if created:
+                    logger.debug("Created custom field %s", obj.name)
+
+                    # --- Apply field values ---
+                    if params.get("default"):
+                        obj.default = params["default"]
+                    if params.get("description"):
+                        obj.description = params["description"]
+                    if params.get("label"):
+                        obj.label = params["label"]
+                    if params.get("required"):
+                        obj.required = params["required"]
+                    if params.get("type"):
+                        obj.type = params["type"]
+                    if params.get("filter_logic"):
+                        obj.filter_logic = params["filter_logic"]
+                    if params.get("weight", -1) >= 0:
+                        obj.weight = params["weight"]
+                    if params.get("group_name"):
+                        obj.group_name = params["group_name"]
+                    if params.get("ui_editable"):
+                        obj.ui_editable = params["ui_editable"]
+                    if ui_visibility:
+                        obj.ui_visible = ui_visibility
+                    if params.get("search_weight", -1) >= 0:
+                        obj.search_weight = params["search_weight"]
+                    if params.get("is_cloneable", None) is not None:
+                        obj.is_cloneable = params["is_cloneable"]
+                    if params.get("required_action", None) is not None:
+                        obj.required_action = params["required_action"]
+
+                    # on_objects
+                    if on_objects:
+                        for object_type in on_objects:
+                            obj.object_types.add(get_class_for_class_path(object_type))
+
+                    # related_object_type
+                    if related_object_type:
+                        obj.related_object_type = get_class_for_class_path(
+                            related_object_type
+                        )
+
+                    # validation fields
+                    if validation_regex:
+                        obj.validation_regex = validation_regex
+                    if validation_minimum:
+                        obj.validation_minimum = validation_minimum
+                    if validation_maximum:
+                        obj.validation_maximum = validation_maximum
+
+                    # choices
+                    if choices:
+                        choice_set, _ = CustomFieldChoiceSet.objects.get_or_create(
+                            name=f"{obj.name}_choices",
+                            choices=choices,
+                        )
+                        obj.choice_set = choice_set
+
+                    obj.save()
+
+                    if create_date:
+                        self.set_create_date(obj, create_date)
+
+                self._ok(obj, created)
+            except Exception as e:
+                self._fail(str(e))
+
+        return result
 
 
 register_initializer("custom_fields", CustomFieldInitializer)

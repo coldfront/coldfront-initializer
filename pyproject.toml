@@ -27,6 +27,8 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "coldfront",
+    "pytest-django>=4.14.0",
     "reuse>=6.2.0",
     "ruff>=0.15.7",
 ]
@@ -36,3 +38,15 @@ name = "testpypi"
 url = "https://test.pypi.org/simple/"
 publish-url = "https://test.pypi.org/legacy/"
 explicit = true
+
+[tool.uv.sources]
+coldfront = { git = "https://github.com/coldfront/coldfront", branch = "dev/2.0.x" }
+
+[tool.pytest]
+minversion = "9.0"
+DJANGO_SETTINGS_MODULE = "coldfront.config.settings"
+testpaths = ["tests"]
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+filterwarnings = [
+    'ignore::DeprecationWarning',
+]

@@ -15,6 +15,7 @@ from coldfront.users.models import Group, User
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
+    LoadResult,
     register_initializer,
 )
 
@@ -41,6 +42,7 @@ class StorageQuotaInitializer(BaseInitializer):
         if allocation_slug is None:
             logger.warning("StorageQuota requires 'allocation' field")
             params["_skip"] = True
+            params["_skip_reason"] = "StorageQuota requires 'allocation' field"
             return
         try:
             params["allocation"] = Allocation.objects.get(slug=allocation_slug)
@@ -50,36 +52,51 @@ class StorageQuotaInitializer(BaseInitializer):
                 allocation_slug,
             )
             params["_skip"] = True
+            params["_skip_reason"] = (
+                f"Allocation with slug '{allocation_slug}' not found,"
+                " skipping StorageQuota"
+            )
 
     def load_data(self, records):
         if records is None:
-            return
+            return None
+
+        result = LoadResult(found=len(records))
+        self._result = result
 
         for params in records:
-            self._pre_process(params)
-            if params.pop("_skip", False):
-                continue
+            try:
+                self._pre_process(params)
+                if params.pop("_skip", False):
+                    self._skip(params.pop("_skip_reason", None))
+                    continue
 
-            custom_field_data = self._pop_custom_fields(params)
-            tags = self._pop_tags(params)
+                custom_field_data = self._pop_custom_fields(params)
+                tags = self._pop_tags(params)
 
-            self.resolve_required(params)
-            self.resolve_optional(params)
-            m2m_values = self.collect_m2m_values(params)
+                self.resolve_required(params)
+                self.resolve_optional(params)
+                m2m_values = self.collect_m2m_values(params)
 
-            matching_params, defaults = self.split_params(params, self.MATCH_PARAMS)
-            obj, created = self._model.objects.get_or_create(
-                **matching_params, defaults=defaults
-            )
-
-            if created:
-                logger.debug(
-                    "Created StorageQuota for allocation %s", obj.allocation.slug
+                matching_params, defaults = self.split_params(params, self.MATCH_PARAMS)
+                obj, created = self._model.objects.get_or_create(
+                    **matching_params, defaults=defaults
                 )
 
-            self.set_m2m_values(obj, m2m_values)
-            self.set_custom_fields_values(obj, custom_field_data)
-            self.set_tags(obj, tags)
+                if created:
+                    logger.debug(
+                        "Created StorageQuota for allocation %s", obj.allocation.slug
+                    )
+
+                self.set_m2m_values(obj, m2m_values)
+                self.set_custom_fields_values(obj, custom_field_data)
+                self.set_tags(obj, tags)
+
+                self._ok(obj, created)
+            except Exception as e:
+                self._fail(str(e))
+
+        return result
 
 
 register_initializer("storage_quotas", StorageQuotaInitializer)

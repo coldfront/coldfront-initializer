@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+from dataclasses import dataclass, field as dc_field
 from pathlib import Path
 from typing import Tuple
 
@@ -13,6 +14,38 @@ from jinja2 import BaseLoader, Environment
 from ruamel.yaml import YAML
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class LoadResult:
+    """Outcome of a load_data() run.
+
+    found    -- records parsed from the YAML (or normalized, for dict format)
+    loaded   -- records created or updated successfully
+    created  -- subset of loaded: newly created
+    updated  -- subset of loaded: already existed
+    skipped  -- records intentionally skipped (warn + continue)
+    errors   -- hard failures; one message per failed record
+    warnings -- per-record messages for skips (e.g. "resource_object not found")
+    """
+
+    found: int = 0
+    loaded: int = 0
+    created: int = 0
+    updated: int = 0
+    skipped: int = 0
+    errors: list = dc_field(default_factory=list)
+    warnings: list = dc_field(default_factory=list)
+
+    @property
+    def ok(self):
+        """No hard failures."""
+        return not self.errors
+
+    @property
+    def partial(self):
+        """Some records were skipped or failed to load."""
+        return self.loaded < self.found or bool(self.warnings)
 
 
 class BaseInitializer:
@@ -90,54 +123,87 @@ class BaseInitializer:
 
     def load_data(self, records):
         if records is None:
-            return
+            return None
 
         items = self._normalize_records(records)
+        result = LoadResult(found=len(items))
+        self._result = result
 
         for params in items:
-            # Hook 1: pre-processing (color, schema, resource_object, etc.)
-            self._pre_process(params)
+            try:
+                # Hook 1: pre-processing (color, schema, resource_object, etc.)
+                self._pre_process(params)
 
-            custom_field_data = self._pop_custom_fields(params)
-            tags = self._pop_tags(params)
-            create_date = self._pop_created(params)
+                if params.pop("_skip", False):
+                    self._skip(params.pop("_skip_reason", None))
+                    continue
 
-            # Pop slug for models that don't support it
-            # (common in YAML but not a DB field)
-            if not self._has_slug:
-                params.pop("slug", None)
+                custom_field_data = self._pop_custom_fields(params)
+                tags = self._pop_tags(params)
+                create_date = self._pop_created(params)
 
-            # Resolve FK / M2M associations
-            self.resolve_required(params)
-            self.resolve_optional(params)
-            m2m_values = self.collect_m2m_values(params)
+                # Pop slug for models that don't support it
+                # (common in YAML but not a DB field)
+                if not self._has_slug:
+                    params.pop("slug", None)
 
-            # Split and create
-            unique_params = self.MATCH_PARAMS or ["name", "slug"]
-            # Ensure PRIMARY_KEY is included for dict-keyed records
-            if self.RECORDS_ARE_DICT and self.PRIMARY_KEY not in unique_params:
-                unique_params = [self.PRIMARY_KEY] + unique_params
-            matching_params, defaults = self.split_params(params, unique_params)
-            obj, created = self._model.objects.get_or_create(
-                **matching_params, defaults=defaults
-            )
+                # Resolve FK / M2M associations
+                self.resolve_required(params)
+                self.resolve_optional(params)
+                m2m_values = self.collect_m2m_values(params)
 
-            if created:
-                if create_date and self._supports_created():
-                    self.set_create_date(obj, create_date)
-                logger.debug(
-                    "Created %s: %s", self._model.__name__, self._display_name(obj)
+                # Split and create
+                unique_params = self.MATCH_PARAMS or ["name", "slug"]
+                # Ensure PRIMARY_KEY is included for dict-keyed records
+                if self.RECORDS_ARE_DICT and self.PRIMARY_KEY not in unique_params:
+                    unique_params = [self.PRIMARY_KEY] + unique_params
+                matching_params, defaults = self.split_params(params, unique_params)
+                obj, created = self._model.objects.get_or_create(
+                    **matching_params, defaults=defaults
                 )
 
-            # Set M2M after creation
-            self.set_m2m_values(obj, m2m_values)
+                if created:
+                    if create_date and self._supports_created():
+                        self.set_create_date(obj, create_date)
+                    logger.debug(
+                        "Created %s: %s", self._model.__name__, self._display_name(obj)
+                    )
 
-            # Hook 2: post-processing (project users, permissions, choices, etc.)
-            self._post_process(obj, created, params)
+                # Set M2M after creation
+                self.set_m2m_values(obj, m2m_values)
 
-            # Apply custom fields and tags
-            self.set_custom_fields_values(obj, custom_field_data)
-            self.set_tags(obj, tags)
+                # Hook 2: post-processing (project users, permissions, choices, etc.)
+                self._post_process(obj, created, params)
+
+                # Apply custom fields and tags
+                self.set_custom_fields_values(obj, custom_field_data)
+                self.set_tags(obj, tags)
+
+                self._ok(obj, created)
+            except Exception as e:
+                self._fail(str(e))
+
+        return result
+
+    def _ok(self, obj, created):
+        """Record one successfully loaded record."""
+        result = self._result
+        result.loaded += 1
+        if created:
+            result.created += 1
+        else:
+            result.updated += 1
+
+    def _skip(self, reason=None):
+        """Record one intentionally skipped record."""
+        result = self._result
+        result.skipped += 1
+        if reason:
+            result.warnings.append(reason)
+
+    def _fail(self, msg):
+        """Record one hard failure."""
+        self._result.errors.append(msg)
 
     def _normalize_records(self, records):
         """Convert dict-keyed records into list-of-params format."""

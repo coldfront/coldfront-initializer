@@ -76,16 +76,6 @@ class Command(BaseCommand):
         else:
             coldfront_logger.setLevel(logging.WARNING)
 
-    def _count_records(self, records):
-        """Return the number of records in a YAML data set."""
-        if records is None:
-            return 0
-        if isinstance(records, dict):
-            return len(records)
-        if isinstance(records, list):
-            return len(records)
-        return 0
-
     def load_library(self, library, filter, verbosity):
         filter = [n for name in filter for n in name.split(",") if n.strip()]
 
@@ -121,14 +111,13 @@ class Command(BaseCommand):
                         )
                         continue
 
-                    count = self._count_records(records)
                     self.stdout.write(
-                        self.style.SUCCESS(
-                            f"Loading {library}/{file.name}... {count} records found"
-                        )
+                        self.style.SUCCESS(f"Loading {library}/{file.name}... "),
+                        ending="",
                     )
-                    initializer_instance.load_data(records)
-                    results.append((file_stem, True, count, None))
+                    result = initializer_instance.load_data(records)
+                    self._print_initializer_line(file_stem, result)
+                    results.append((file_stem, result, None))
                 except Exception as e:
                     self.stderr.write(
                         self.style.ERROR(f"{library}/{file.name} failed: {e}")
@@ -137,7 +126,7 @@ class Command(BaseCommand):
                         import traceback
 
                         traceback.print_exception(e)
-                    results.append((file_stem, False, 0, str(e)))
+                    results.append((file_stem, None, str(e)))
 
         self._print_summary(results, library)
 
@@ -162,7 +151,6 @@ class Command(BaseCommand):
                     self.style.SUCCESS(f"Loading {initializer_name}... "), ending=""
                 )
                 records = initializer_instance.load_yaml(f"{initializer_name}.yml")
-                count = self._count_records(records)
 
                 if records is None:
                     self.stdout.write(
@@ -172,9 +160,9 @@ class Command(BaseCommand):
                     )
                     continue
 
-                initializer_instance.load_data(records)
-                self.stdout.write(self.style.SUCCESS(f"{count} records loaded"))
-                results.append((initializer_name, True, count, None))
+                result = initializer_instance.load_data(records)
+                self._print_initializer_line(initializer_name, result)
+                results.append((initializer_name, result, None))
             except Exception as e:
                 self.stderr.write(
                     self.style.ERROR(f"{initializer.__name__} failed: {e}")
@@ -183,32 +171,88 @@ class Command(BaseCommand):
                     import traceback
 
                     traceback.print_exception(e)
-                results.append((initializer_name, False, 0, str(e)))
+                results.append((initializer_name, None, str(e)))
 
         self._print_summary(results, "initializers")
 
+    def _print_initializer_line(self, name, result):
+        """Print the per-initializer inline outcome (parsed/loaded/skipped/failed)."""
+        parts = []
+        if result.found:
+            parts.append(f"parsed {result.found}")
+        if result.loaded:
+            parts.append(f"loaded {result.loaded}")
+        if result.skipped:
+            parts.append(f"skipped {result.skipped}")
+        if result.errors:
+            parts.append(f"failed {len(result.errors)}")
+
+        line = ", ".join(parts)
+        if result.errors:
+            self.stdout.write(self.style.ERROR(line))
+        else:
+            self.stdout.write(self.style.SUCCESS(line))
+
+        for msg in result.errors:
+            self.stderr.write(self.style.ERROR(f"  {name}: {msg}"))
+
     def _print_summary(self, results, label):
-        """Print a summary table of all loaded initializers."""
+        """Print a summary table of all loaded initializers (tri-state)."""
         if not results:
             return
 
         self.stdout.write("")
         self.stdout.write(self.style.SUCCESS(f"─── {label} summary ───"))
-        success_count = 0
-        total_records = 0
+        loaded_init = 0
+        issues = 0
+        total_found = 0
+        total_loaded = 0
+        total_skipped = 0
 
-        for name, success, count, error in results:
-            if success:
-                self.stdout.write(self.style.SUCCESS(f"  ✅ {name}: {count} records"))
-                success_count += 1
-                total_records += count
-            else:
+        for name, result, error in results:
+            if result is None:
+                # Whole initializer failed (parse error or raised exception)
                 self.stdout.write(self.style.ERROR(f"  ❌ {name}: FAILED — {error}"))
+                issues += 1
+                continue
+
+            total_found += result.found
+            total_loaded += result.loaded
+            total_skipped += result.skipped
+
+            if result.errors:
+                issues += 1
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"  ❌ {name}: loaded {result.loaded} of {result.found}"
+                        f" ({len(result.errors)} errors)"
+                    )
+                )
+                for msg in result.errors:
+                    self.stderr.write(self.style.ERROR(f"      {name}: {msg}"))
+            elif result.loaded == result.found and not result.warnings:
+                self.stdout.write(
+                    self.style.SUCCESS(f"  ✅ {name}: {result.loaded} records")
+                )
+                loaded_init += 1
+            else:
+                issues += 1
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"  ⚠️ {name}: {result.loaded} of {result.found} records"
+                        f" loaded ({result.skipped} skipped)"
+                    )
+                )
+                for msg in result.warnings:
+                    self.stderr.write(self.style.WARNING(f"      {name}: {msg}"))
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Loaded {success_count}/{len(results)} {label}"
-                f" ({total_records} total records)"
+                f"Loaded {loaded_init}/{len(results)} {label}"
+                f" ({total_found} found, {total_loaded} loaded,"
+                f" {total_skipped} skipped)"
             )
         )
+        if issues:
+            self.stdout.write(self.style.WARNING(f"{issues} {label} had issues"))
         self.stdout.write("")

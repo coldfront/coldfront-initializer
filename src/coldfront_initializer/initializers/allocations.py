@@ -15,6 +15,7 @@ from django.core.exceptions import (
 
 from coldfront_initializer.initializers.base import (
     BaseInitializer,
+    LoadResult,
     register_initializer,
 )
 
@@ -96,35 +97,47 @@ class AllocationInitializer(BaseInitializer):
         except ValueError as e:
             logger.warning("Unable to create Allocation: %s", e)
             params["_skip"] = True
+            params["_skip_reason"] = f"Unable to create Allocation: {e}"
 
     def load_data(self, records):
         if records is None:
-            return
+            return None
+
+        result = LoadResult(found=len(records))
+        self._result = result
 
         for params in records:
-            self._pre_process(params)
-            if params.pop("_skip", False):
-                continue
+            try:
+                self._pre_process(params)
+                if params.pop("_skip", False):
+                    self._skip(params.pop("_skip_reason", None))
+                    continue
 
-            custom_field_data = self._pop_custom_fields(params)
-            tags = self._pop_tags(params)
-            create_date = self._pop_created(params)
+                custom_field_data = self._pop_custom_fields(params)
+                tags = self._pop_tags(params)
+                create_date = self._pop_created(params)
 
-            self.resolve_required(params)
-            self.resolve_optional(params)
+                self.resolve_required(params)
+                self.resolve_optional(params)
 
-            matching_params, defaults = self.split_params(params, self.MATCH_PARAMS)
-            obj, created = self._model.objects.get_or_create(
-                **matching_params, defaults=defaults
-            )
+                matching_params, defaults = self.split_params(params, self.MATCH_PARAMS)
+                obj, created = self._model.objects.get_or_create(
+                    **matching_params, defaults=defaults
+                )
 
-            if created:
-                if create_date:
-                    self.set_create_date(obj, create_date)
-                logger.debug("Created allocation %s", obj.slug)
+                if created:
+                    if create_date:
+                        self.set_create_date(obj, create_date)
+                    logger.debug("Created allocation %s", obj.slug)
 
-            self.set_custom_fields_values(obj, custom_field_data)
-            self.set_tags(obj, tags)
+                self.set_custom_fields_values(obj, custom_field_data)
+                self.set_tags(obj, tags)
+
+                self._ok(obj, created)
+            except Exception as e:
+                self._fail(str(e))
+
+        return result
 
 
 register_initializer("allocations", AllocationInitializer)
