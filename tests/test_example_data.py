@@ -81,7 +81,77 @@ def test_allocation_count_matches_yaml(load_all, examples_dir):
 
 
 @pytest.mark.django_db
-def test_allocations_skip_counted(load_all, examples_dir, tmp_path):
+def test_comment_example_covers_multiple_objects(load_all):
+    """The example comment data includes several comments on one allocation and
+    comments on allocation change requests."""
+    load_all()
+
+    from coldfront.core.models import CommentEntry
+    from django.contrib.contenttypes.models import ContentType
+
+    alloc_ct = ContentType.objects.get(app_label="ras", model="allocation")
+    alloc_pk = alloc_ct.model_class().objects.get(slug="a1000001").pk
+    assert (
+        CommentEntry.objects.filter(
+            assigned_object_type=alloc_ct, assigned_object_id=alloc_pk
+        ).count()
+        == 3
+    )
+
+    acr_ct = ContentType.objects.get(app_label="ras", model="allocationchangerequest")
+    acr_pk = acr_ct.model_class().objects.get(slug="acr-0001").pk
+    assert (
+        CommentEntry.objects.filter(
+            assigned_object_type=acr_ct, assigned_object_id=acr_pk
+        ).count()
+        == 2
+    )
+
+
+@pytest.mark.django_db
+def test_comment_entries_support_multiple_comments(load_all):
+    """Comments are always created (no get_or_create), so the same object can
+    have multiple comments."""
+    load_all()  # ensure allocations/users exist
+
+    # a2000002 is not commented on in the example comment_entries.yml,
+    # so these two comments are the only ones for that allocation.
+    yaml_data = """\
+- assigned_object: "ras.allocation:slug=a2000002"
+  created_by: cgray
+  kind: info
+  comments: "First comment"
+- assigned_object: "ras.allocation:slug=a2000002"
+  created_by: ajohnson
+  kind: warning
+  comments: "Second comment"
+"""
+
+    initializer = INITIALIZER_REGISTRY["comment_entries"]("")
+    records = initializer.load_yaml_string(yaml_data)
+    result = initializer.load_data(records)
+
+    assert result.found == 2
+    assert result.loaded == 2
+    assert result.errors == []
+
+    from coldfront.core.models import CommentEntry
+    from django.contrib.contenttypes.models import ContentType
+
+    allocation_ct = ContentType.objects.get(app_label="ras", model="allocation")
+    allocation_pk = allocation_ct.model_class().objects.get(slug="a2000002").pk
+    comments = CommentEntry.objects.filter(
+        assigned_object_type=allocation_ct, assigned_object_id=allocation_pk
+    )
+    assert comments.count() == 2
+    assert set(comments.values_list("comments", flat=True)) == {
+        "First comment",
+        "Second comment",
+    }
+
+
+@pytest.mark.django_db
+def test_allocations_skip_counted(load_all):
     """A record with a missing resource_object is skipped and counted."""
     load_all()  # ensure users/projects/resources exist
 
@@ -95,10 +165,9 @@ def test_allocations_skip_counted(load_all, examples_dir, tmp_path):
   owner: cgray
   resource_object: "ras.resource:DoesNotExist"
 """
-    (tmp_path / "allocations.yml").write_text(yaml_data)
 
-    initializer = INITIALIZER_REGISTRY["allocations"](str(tmp_path))
-    records = initializer.load_yaml("allocations.yml")
+    initializer = INITIALIZER_REGISTRY["allocations"]("")
+    records = initializer.load_yaml_string(yaml_data)
     result = initializer.load_data(records)
 
     assert result.found == 2

@@ -6,6 +6,7 @@ SPDX-PackageDownloadLocation = "https://github.com/coldfront/coldfront-initializ
 path = [
     ".python-version",
     "pyproject.toml",
+    ".env.testing",
     "**.yml",
     "**.md",
     "**.gitignore",

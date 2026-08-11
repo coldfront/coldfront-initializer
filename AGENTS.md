@@ -28,6 +28,10 @@ src/coldfront_initializer/
 └── library/                           # Community-maintained library of initial data
     └── custom_fields/
         └── custom_fields.yml
+
+tests/
+├── conftest.py                        # examples_dir + load_all fixtures
+└── test_*.py                          # pytest + pytest-django tests
 ```
 
 - **Initializers** live in `src/coldfront_initializer/initializers/`, one file per model
@@ -151,15 +155,6 @@ When YAML records use identifiers as keys (e.g., `username: {details...}`), set 
 
 ---
 
-## Dependencies
-
-- `coldfront` (installed separately, imported at runtime)
-- `jinja2>=3.1.6` — template rendering for YAML files
-- `ruamel-yaml>=0.19.1` — YAML parsing (safe loader)
-- Dev: `ruff>=0.15.7`, `reuse>=6.2.0` (REUSE compliance)
-
----
-
 ## Coding Conventions
 
 - **Formatter**: `ruff format`
@@ -172,9 +167,48 @@ When YAML records use identifiers as keys (e.g., `username: {details...}`), set 
 
 ---
 
+## Testing
+
+### Running the Test Suite
+
+```bash
+COLDFRONT_ENV=.env.testing uv run -m pytest
+```
+
+- Tests live in `tests/` (configured via `[tool.pytest]` in `pyproject.toml`).
+- `DJANGO_SETTINGS_MODULE` is set to `coldfront.config.settings`; the `.env.testing`
+  file provides the required ColdFront env vars (e.g. `ALLOWED_HOSTS`).
+- pytest-django runs **migrations once per session** (not per test); each test
+  marked `@pytest.mark.django_db` runs inside a transaction that is rolled back
+  afterward, so every test sees a clean, migrated DB.
+
+### Writing Tests
+
+- **Name** test files `test_*.py` and mark any DB-accessing test with
+  `@pytest.mark.django_db`.
+- **Fixtures** (`tests/conftest.py`):
+  - `examples_dir` — path to `src/coldfront_initializer/examples/`.
+  - `load_all` — loads every initializer from the example data in
+    `INITIALIZER_ORDER` and returns `{name: LoadResult}` (None when no YAML).
+    Use this to seed the DB before testing a specific initializer.
+- **Avoid temp files**: pass YAML inline to `initializer.load_yaml_string(...)`
+  (construct the initializer with `""` as the path) instead of writing temp files.
+- **Assert on `LoadResult`** (`found`, `loaded`, `skipped`, `errors`, `warnings`):
+  - `loaded == found` and `errors == []` mean the data loaded cleanly.
+  - `loaded == MODEL.objects.count()` verifies one DB row per loaded record
+    (except create-always initializers like comments, which add one row per comment).
+- **Per-record behavior** (skips, multiple comments, FKs) is verified by writing a
+  small inline YAML and loading it directly, then asserting on both the `LoadResult`
+  and the resulting DB rows.
+
+---
+
 ## Common Tasks
 
 ```bash
+# Run the test suite
+COLDFRONT_ENV=.env.testing uv run -m pytest
+
 # Load test data
 uv run coldfront load_test_data -f
 

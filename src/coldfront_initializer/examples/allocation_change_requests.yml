@@ -1,0 +1,16 @@
+- slug: acr-0001
+  allocation: a1000001
+  status: requested
+  requested_by: cgray
+  justification: "Need additional compute time to finish simulations."
+  extension_days: 30
+
+- slug: acr-0002
+  allocation: a1000002
+  status: approved
+  requested_by: ajohnson
+  reviewer: admin
+  justification: "Approved extension for the ongoing project."
+  extension_days: 90
+  attribute_changes:
+    eula: "Yes"

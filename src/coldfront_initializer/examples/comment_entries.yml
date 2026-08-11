@@ -1,0 +1,41 @@
+- assigned_object: "ras.allocation:slug=a1000001"
+  created_by: cgray
+  kind: info
+  comments: "Initial allocation reviewed and approved."
+  tags:
+    - Faculty
+
+- assigned_object: "ras.allocation:slug=a1000001"
+  created_by: ajohnson
+  kind: warning
+  comments: "PI notified that usage is approaching the allocation limit."
+
+- assigned_object: "ras.allocation:slug=a1000001"
+  created_by: admin
+  kind: success
+  comments: "Allocation extended; new end date confirmed."
+
+- assigned_object: "ras.allocation:slug=a2000001"
+  created_by: ajohnson
+  kind: warning
+  comments: "Allocation nearing expiration; renewal requested."
+
+- assigned_object: "ras.allocation:slug=a3000001"
+  created_by: admin
+  kind: success
+  comments: "Storage quota granted for the project."
+
+- assigned_object: "ras.allocationchangerequest:slug=acr-0001"
+  created_by: cgray
+  kind: info
+  comments: "Change request submitted for an extension."
+
+- assigned_object: "ras.allocationchangerequest:slug=acr-0001"
+  created_by: admin
+  kind: success
+  comments: "Change request approved and applied."
+
+- assigned_object: "ras.allocationchangerequest:slug=acr-0002"
+  created_by: ajohnson
+  kind: info
+  comments: "Change request for an attribute update."

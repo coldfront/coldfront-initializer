@@ -1,0 +1,23 @@
+- name: Slurm Cluster Dashboard
+  enabled: true
+  link_text: "Open cluster {{ allocation }}"
+  link_url: "https://slurm.example.org/{{ allocation.slug }}"
+  weight: 10
+  group_name: Monitoring
+  button_class: default
+  new_window: true
+  object_types:
+    - app: ras
+      model: allocation
+
+- name: Project Git Repo
+  enabled: true
+  link_text: "View repository"
+  link_url: "https://git.example.org/{{ project.name }}"
+  weight: 20
+  group_name: Code
+  button_class: success
+  new_window: false
+  object_types:
+    - app: ras
+      model: project

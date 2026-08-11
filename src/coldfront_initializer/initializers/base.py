@@ -316,28 +316,35 @@ class BaseInitializer:
     # Existing public methods (unchanged)
     # ---------------------------------------------------------------------------
 
-    def is_template_file(self, f):
-        pos = f.tell()
-        line = f.readline().strip()
-        f.seek(pos)
-        return line == "# cf_template"
-
     def get_context(self):
         return {}
 
     def load_yaml(self, data_file_name):
+        """Load YAML from a file in ``self.data_file_path``.
+
+        Returns None when the file does not exist.
+        """
         yf = Path(f"{self.data_file_path}/{data_file_name}")
         if not yf.is_file():
             return None
 
         with yf.open("r") as stream:
-            yaml = YAML(typ="safe")
+            return self.load_yaml_string(stream.read())
 
-            if self.is_template_file(stream):
-                template = Environment(loader=BaseLoader).from_string(stream.read())
-                return yaml.load(template.render(self.get_context()))
+    def load_yaml_string(self, data_string):
+        """Load YAML from a string directly (no file needed).
 
-            return yaml.load(stream)
+        Supports the ``# cf_template`` convention: if the first line is
+        ``# cf_template`` the string is rendered as a Jinja2 template.
+        """
+        yaml = YAML(typ="safe")
+
+        lines = data_string.splitlines()
+        if lines and lines[0].strip() == "# cf_template":
+            template = Environment(loader=BaseLoader).from_string(data_string)
+            return yaml.load(template.render(self.get_context()))
+
+        return yaml.load(data_string)
 
     def pop_custom_fields(self, params):
         if "custom_field_data" in params:
@@ -453,6 +460,9 @@ INITIALIZER_ORDER = (
     "slurm_accounts",
     "slurm_associations",
     "slurm_users",
+    "custom_links",
+    "allocation_change_requests",
+    "comment_entries",
 )
 
 

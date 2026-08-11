@@ -29,6 +29,11 @@ class Command(BaseCommand):
             help="List of file names to load from the library",
             default="",
         )
+        parser.add_argument(
+            "--list-libraries",
+            action="store_true",
+            help="List the available community libraries",
+        )
 
     def handle(self, *args, **options):
         verbosity = options.get("verbosity", 1)
@@ -36,6 +41,10 @@ class Command(BaseCommand):
 
         target_path = options["path"]
         library = options["library"]
+
+        if options.get("list_libraries"):
+            self.list_libraries()
+            return
 
         if not target_path and not library:
             raise CommandError("Please provide a --path or a --library to load.")
@@ -75,6 +84,29 @@ class Command(BaseCommand):
             coldfront_logger.setLevel(logging.INFO)
         else:
             coldfront_logger.setLevel(logging.WARNING)
+
+    def list_libraries(self):
+        """List the available community libraries and their YAML files."""
+        library_base_path = os.path.join(
+            os.path.dirname(coldfront_initializer.__file__), "library"
+        )
+        if not os.path.isdir(library_base_path):
+            return
+
+        with os.scandir(library_base_path) as entries:
+            libraries = sorted(e.name for e in entries if e.is_dir())
+
+        for library in libraries:
+            library_path = os.path.join(library_base_path, library)
+            with os.scandir(library_path) as entries:
+                files = sorted(
+                    f.name for f in entries if f.is_file() and f.name.endswith("yml")
+                )
+            if not files:
+                continue
+            self.stdout.write(library)
+            for filename in files:
+                self.stdout.write(f"  |- {filename}")
 
     def load_library(self, library, filter, verbosity):
         filter = [n for name in filter for n in name.split(",") if n.strip()]

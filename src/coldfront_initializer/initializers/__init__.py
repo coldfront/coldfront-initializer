@@ -5,8 +5,11 @@
 # ruff: noqa: F401
 # All initializers must be imported here, to be registered
 from .allocations import AllocationInitializer
+from .allocation_change_requests import AllocationChangeRequestInitializer
+from .comment_entries import CommentEntryInitializer
 from .custom_field_choicesets import CustomFieldChoiceSetInitializer
 from .custom_fields import CustomFieldInitializer
+from .custom_links import CustomLinkInitializer
 from .groups import GroupInitializer
 from .object_permissions import ObjectPermissionInitializer
 from .projects import ProjectInitializer
