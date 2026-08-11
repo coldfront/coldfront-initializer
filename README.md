@@ -1,12 +1,13 @@
 # ColdFront Initializer Plugin
 
-ColdFront Initializer is a plugin for ColdFront. The plugin loads initial data into the ColdFront database. You define the initial data in YAML files. The plugin reads the YAML files and creates the records.
+ColdFront initializer is a plugin for ColdFront version 2 that loads data from YAML files into the ColdFront database.
 
-Use the plugin for these tasks:
+## Features
 
-- Load data into a new ColdFront 2.x instance.
-- Move data from a ColdFront 1.1.x instance to a ColdFront 2.x instance.
+- Load data new into ColdFront 2.x.
+- Migrate data from a ColdFront 1.1.x instance to a ColdFront 2.x instance.
 - Load test data into a development instance.
+- Import community supported data libraries into ColdFront: fields of science, permissions, roles.
 
 ## Install
 
