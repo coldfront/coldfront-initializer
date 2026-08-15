@@ -81,7 +81,7 @@ write:unlink/self/publication:
   description: "Unlink publications from projects you own"
   enabled: true
   object_types:
-    ras:
+    ris:
       - publication
   constraints:
     projects__owner: $user
@@ -92,7 +92,7 @@ write:unlink/self/funding:
   description: "Unlink funding from projects you own"
   enabled: true
   object_types:
-    ras:
+    ris:
       - funding
   constraints:
     projects__owner: $user
