@@ -13,6 +13,8 @@ principal_investigator:
     - read/self/allocation
     - write:request:renew/self/allocation
     - write:add/self/allocationchangerequest
+    - write:unlink/self/publication
+    - write:unlink/self/funding
     - write/team/projectuser
     - read/all/user
     - write:add/self/commententry/allocation

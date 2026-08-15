@@ -75,6 +75,28 @@ write/team/projectuser:
     - project__owner: $user
     - project__users__user: $user
 
+write:unlink/self/publication:
+  actions:
+    - unlink
+  description: "Unlink publications from projects you own"
+  enabled: true
+  object_types:
+    ras:
+      - publication
+  constraints:
+    projects__owner: $user
+
+write:unlink/self/funding:
+  actions:
+    - unlink
+  description: "Unlink funding from projects you own"
+  enabled: true
+  object_types:
+    ras:
+      - funding
+  constraints:
+    projects__owner: $user
+
 read/all/user:
   actions:
     - view

@@ -96,6 +96,28 @@ read/all/projectuser:
     ras:
       - projectuser
 
+write:unlink/self/publication:
+  actions:
+    - unlink
+  description: "Unlink publications from projects you own"
+  enabled: true
+  object_types:
+    ras:
+      - publication
+  constraints:
+    projects__owner: $user
+
+write:unlink/self/funding:
+  actions:
+    - unlink
+  description: "Unlink funding from projects you own"
+  enabled: true
+  object_types:
+    ras:
+      - funding
+  constraints:
+    projects__owner: $user
+
 # --- Permissions for center_director role ---
 
 write:review/all/allocation:
