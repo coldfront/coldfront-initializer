@@ -10,9 +10,11 @@ from .comment_entries import CommentEntryInitializer
 from .custom_field_choicesets import CustomFieldChoiceSetInitializer
 from .custom_fields import CustomFieldInitializer
 from .custom_links import CustomLinkInitializer
+from .funding import FundingInitializer
 from .groups import GroupInitializer
 from .object_permissions import ObjectPermissionInitializer
 from .projects import ProjectInitializer
+from .publications import PublicationInitializer
 from .resource_types import ResourceTypeInitializer
 from .resources import ResourceInitializer
 from .roles import RoleInitializer

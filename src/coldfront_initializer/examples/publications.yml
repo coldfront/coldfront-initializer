@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: (C) University at Buffalo
+#
+# SPDX-License-Identifier: Apache-2.0
+
+- doi: 10.1103/PhysRevLett.128.222001
+  title: Angular momentum in QGP holography
+  authors:
+    - name: C. Gray
+      orcid: 0000-0001-2345-6789
+    - name: A. Stewart
+      orcid: 0000-0002-3456-7890
+  year: 2023
+  journal: Physical Review Letters
+  source: crossref
+  external_id: 10.1103/PhysRevLett.128.222001
+  projects:
+    - p1000001
+    - p1000002
+
+- doi: 10.1103/PhysRevB.105.245302
+  title: Measuring critical behavior of quantum Hall transitions
+  authors:
+    - name: S. Foster
+      orcid: 0000-0001-2345-6789
+    - name: A. Rivera
+      orcid: 0000-0002-3456-7890
+  year: 2022
+  journal: Physical Review B
+  source: manual
+  projects:
+    - p1000002

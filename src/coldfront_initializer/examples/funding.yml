@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: (C) University at Buffalo
+#
+# SPDX-License-Identifier: Apache-2.0
+
+- award_number: NSF-ACI-123456
+  funding_agency: NSF
+  title: Holographic approaches to the quark-gluon plasma
+  amount_awarded: "1000000.00 USD"
+  start_date: 2022-01-01
+  end_date: 2025-12-31
+  status: active
+  source: nsf
+  external_id: 123456
+  projects:
+    - p1000001
+    - p1000002
+
+- award_number: DOE-SC-789012
+  funding_agency: DOE
+  title: Critical phenomena in quantum Hall systems
+  amount_awarded: "750000.00 USD"
+  start_date: 2023-02-15
+  end_date: 2026-02-14
+  status: active
+  source: nsf
+  projects:
+    - p1000002

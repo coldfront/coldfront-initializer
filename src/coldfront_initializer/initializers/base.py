@@ -455,6 +455,8 @@ INITIALIZER_ORDER = (
     "storage_resources",
     "storage_snapshot_policies",
     "projects",
+    "publications",
+    "funding",
     "allocations",
     "storage_quotas",
     "slurm_accounts",
