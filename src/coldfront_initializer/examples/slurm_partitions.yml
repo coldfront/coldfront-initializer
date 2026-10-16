@@ -3,16 +3,6 @@
   slug: snowflake-gpu
   description: GPU compute partition
   nodes: cpn-[12-13]
-  max_jobs: 4
-  max_submit_jobs: 10
-  max_tres_per_job:
-    node: 5
-    cpu: 20
-  max_tres_per_node:
-    gpu: 8
-  max_tres_mins_per_job:
-    cpu: 360
-  fairshare: 1
   qos: gpu
   allow_qos:
     - gpu
@@ -26,9 +16,6 @@
   cluster: snowflake
   slug: snowflake-general-compute
   description: General compute partition
-  max_jobs: 8
-  max_submit_jobs: 20
-  fairshare: 1
   nodes: cpn-[10-20]
   allow_qos:
     - normal

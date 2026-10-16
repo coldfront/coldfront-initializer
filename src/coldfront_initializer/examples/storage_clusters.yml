@@ -1,11 +1,9 @@
 - name: VAST-A
   description: VAST storage cluster A
   backend_path: coldfront.storage.backends.dummy.DummyBackend
-  auto_sync_enabled: false
   capacity_bytes: 1000000000000000 # 1 PB
 
 - name: VAST-B
   description: VAST storage cluster B
   backend_path: coldfront.storage.backends.dummy.DummyBackend
-  auto_sync_enabled: false
   capacity_bytes: 2000000000000000 # 2 PB

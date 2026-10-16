@@ -1,15 +1,15 @@
 - name: Faculty
   slug: faculty
-  color: Pink
+  color: warning
 - name: Payment Sent
   slug: paymnet-sent
-  color: Teal
+  color: primary
   object_types:
     - app: ras
       model: allocation
 - name: Review Required
   slug: review-required
-  color: Yellow
+  color: error
   object_types:
     - app: ras
       model: project

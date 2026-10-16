@@ -4,7 +4,7 @@
   link_url: "https://localhost/slurm/{{ object.name }}"
   weight: 10
   group_name: Monitoring
-  button_class: success
+  button_variant: success
   new_window: true
   object_types:
     - app: slurm

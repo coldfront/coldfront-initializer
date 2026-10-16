@@ -1,4 +1,4 @@
 - name: Commercial Software
   slug: com-soft
   description: A commercial software product EULA required
-  color: Red
+  color: error
